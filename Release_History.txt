@@ -1,0 +1,20 @@
+####################################################
+#                                                  #
+#  MicroPython Ameba RTL8722 Port Release History  #
+#                                                  #
+####################################################
+
+
+#RTL8722 MicroPython SDK release V0.0.1(Alpha)  29/09/2020
+- Ported basic MicroPython functions 
+- Implemented REPL and basic terminal functions
+- Added Pin Mapping for RTL8722
+- Added perpharel helper modules:
+    - GPIO
+    - RTC
+    - Time and Delay
+    - PWM
+    - Timer
+    - UART
+    - I2C
+    - SPI
