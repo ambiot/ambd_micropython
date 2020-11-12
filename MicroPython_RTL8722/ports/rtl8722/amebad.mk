@@ -104,8 +104,9 @@ UPY_C += mp_helper/bufhelper.c
 UPY_C += mp_helper/gccollect.c
 UPY_C += mp_helper/mods/modameba.c
 UPY_C += mp_helper/mods/modmachine.c
-#UPY_C += mp_helper/mods/modlwip.c
-#UPY_C += mp_helper/mods/moduwireless.c
+UPY_C += mp_helper/mods/wireless/objwlan.c
+UPY_C += mp_helper/mods/moduwireless.c
+UPY_C += mp_helper/mods/modsocket.c
 #UPY_C += mp_helper/mods/modnetwork.c
 UPY_C += mp_helper/mods/modutime.c
 #UPY_C += mp_helper/mods/modterm.c
@@ -114,7 +115,7 @@ UPY_C += mp_helper/mods/moduos.c
 #UPY_C += mp_helper/mods/machine/objwdt.c
 #UPY_C += mp_helper/mods/machine/objflash.c
 UPY_C += mp_helper/mods/machine/objrtc.c
-#UPY_C += mp_helper/mods/machine/objadc.c
+UPY_C += mp_helper/mods/machine/objadc.c
 ##UPY_C += mp_helper/mods/machine/objdac.c
 UPY_C += mp_helper/mods/machine/objpin.c
 UPY_C += mp_helper/mods/machine/obji2c.c
@@ -122,16 +123,12 @@ UPY_C += mp_helper/mods/machine/objpwm.c
 UPY_C += mp_helper/mods/machine/objtimer.c
 UPY_C += mp_helper/mods/machine/objspi.c
 UPY_C += mp_helper/mods/machine/objuart.c
-#UPY_C += mp_helper/mods/machine/objcrypto.c
-#UPY_C += mp_helper/mods/wireless/objwlan.c
-#UPY_C += mp_helper/mods/network/objnetif.c
-#UPY_C += mp_helper/mods/network/dhcps.c
 UPY_C += lib/utils/pyexec.c
 UPY_C += lib/mp-readline/readline.c
 UPY_C += lib/utils/interrupt_char.c
 UPY_C += lib/timeutils/timeutils.c
 UPY_C += lib//utils/sys_stdio_mphal.c
-#UPY_C += lib/netutils/netutils.c 
+UPY_C += lib/netutils/netutils.c 
 #UPY_C += lib/oofatfs/ff.c 
 #UPY_C += lib/oofatfs/ffunicode.c 
 #UPY_C += lib/oofatfs/option/ccsbcs.c 
@@ -190,9 +187,11 @@ LIBFLAGS = -Wl,--no-enum-size-warning -Wl,--warn-common
 ###############################
 #         ARCHIVE LIST        #
 ###############################
-LIBAR += -L$(VENDOR)/../ARCHIVE_LIB/ -l_arduino -l_wlan -l_wps -l_wlan_mp -l_wifi_ucps_fw 
+LIBAR += -Wl,--start-group
+LIBAR += -L$(VENDOR)/../ARCHIVE_LIB/ -l_arduino -l_wlan -l_wps -l_wifi_ucps_fw 
 LIBAR += -l_wifi_fw -l_websocket -l_user -l_usbh -l_usbd -l_tftp -l_mdns -l_m4a_self 
-LIBAR += -l_httpd -l_httpc -l_http2 -l_eap -l_dct -l_coap -l_cmsis_dsp -l_bt 
+LIBAR += -l_httpd -l_httpc -l_eap -l_dct -l_coap -l_cmsis_dsp -l_bt 
+LIBAR += -Wl,--end-group
 
 
 ###########################

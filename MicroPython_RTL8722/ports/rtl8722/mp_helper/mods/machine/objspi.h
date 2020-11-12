@@ -38,6 +38,9 @@
 
 #define SPI_DEFAULT_BAUD_RATE           (2000000)
 
+#define SPI_MASTER                      0
+#define SPI_SLAVE                       1
+
 #ifndef MICROPY_PY_MACHINE_SPI_MSB
 #define MICROPY_PY_MACHINE_SPI_MSB      (0)
 #define MICROPY_PY_MACHINE_SPI_LSB      (1)
@@ -73,6 +76,7 @@ typedef struct {
     pin_obj_t *mosi;
     uint8_t   ssi_idx;
     uint8_t   ssi_pinmux;
+    uint8_t   mode;
 } spi_obj_t;
 
 #endif  // OBJSPI_H_

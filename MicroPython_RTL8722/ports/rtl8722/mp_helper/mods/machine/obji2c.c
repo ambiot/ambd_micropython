@@ -28,7 +28,7 @@
 
 
 i2c_t i2cwire0;
-i2c_t i2cwire1;
+//i2c_t i2cwire1;
 
 
 STATIC i2c_obj_t i2c_obj[2] = {
@@ -236,11 +236,19 @@ MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(machine_i2c_readfrom_into_obj, 3, 4, machine
 STATIC mp_obj_t machine_i2c_writeto(size_t n_args, const mp_obj_t *args) {
     mp_obj_base_t *self = (mp_obj_base_t*)MP_OBJ_TO_PTR(args[0]);
     mp_machine_i2c_p_t *i2c_p = (mp_machine_i2c_p_t*)self->type->protocol;
+    
     mp_int_t addr = mp_obj_get_int(args[1]);
-    mp_buffer_info_t bufinfo;
-    mp_get_buffer_raise(args[2], &bufinfo, MP_BUFFER_READ);
+    
+    //mp_buffer_info_t bufinfo;
+    //mp_get_buffer_raise(args[2], &bufinfo, MP_BUFFER_READ);
+    
+    int int_in = mp_obj_get_int(args[2]);
+
     bool stop = (n_args == 3) ? true : mp_obj_is_true(args[3]);
-    int ret = _i2c_writeto(self, addr,  bufinfo.buf, bufinfo.len, stop);
+
+    //int ret = _i2c_writeto(self, addr,  bufinfo.buf, bufinfo.len, stop); 
+    int ret = _i2c_writeto(self, addr, (const uint8_t *)&int_in, 1, stop); 
+
     if (ret < 0) {
         mp_raise_OSError(-ret);
     }

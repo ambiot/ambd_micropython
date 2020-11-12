@@ -46,6 +46,8 @@
 
 extern const mp_obj_type_t i2c_type;
 
+void _i2c_deinit0();
+
 //these two struct only to validate pin, peripharel and function fields don't mean anything
 static const PinMap PinMap_I2C_SDA[] = {
     {PA_26, I2C_0,      1},
