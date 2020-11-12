@@ -27,9 +27,22 @@
 #include <stdio.h>
 #include "py/builtin.h"
 
-STATIC const char help_text[] =
-"Welcome to use MicroPython_AmebaD Port"
-MICROPY_HW_MCU_NAME
+const char ameba_mp_help_text[] =
+"Welcome to use MicroPython_Ameba RTL8722 Port!\n"
 "\n"
-"Please visit https://github.com/xidameng/micropython_amebaD/tree/ameba/ports/AMEBA-D for more information\n"
+"For more information about this port please visit\n"
+"https://github.com/ambiot/ambd_micropython/tree/master/MicroPython_RTL8722/ports/rtl8722\n"
+"\n"
+"For online docs please visit http://docs.micropython.org/\n"
+"\n"
+"Control commands:\n"
+"  CTRL-A        -- on a blank line, enter raw REPL mode\n"
+"  CTRL-B        -- on a blank line, enter normal REPL mode\n"
+"  CTRL-C        -- interrupt a running program\n"
+"  CTRL-D        -- on a blank line, exit or do a soft reset\n"
+"  CTRL-E        -- on a blank line, enter paste mode\n"
+"\n"
+"For further help on a specific object, type help(obj)\n"
+"To find out all available built-in modules, type help(modules)\n"
+"\n"
 ;

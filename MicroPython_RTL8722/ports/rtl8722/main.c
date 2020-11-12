@@ -45,13 +45,13 @@
 #include "device.h"
 #include "serial_api.h"
 #include "main.h"
+#include "lib/utils/interrupt_char.h"
 
-/* LOGUART pins: */
-#define UART_TX    PA_7
-#define UART_RX    PA_8
 
-serial_t    uartobj;
 
+//serial_t    uartobj;
+
+//void serial_repl_handler(uint32_t id, SerialIrq event);
 /*****************************************************************************
  *                              Internal variables
  * ***************************************************************************/
@@ -67,32 +67,45 @@ uint8_t mpHeap[MP_HEAP_SIZE];
 
 void micropython_task(void const *arg) {
 
-    serial_init(&uartobj,UART_TX,UART_RX);
-    serial_baud(&uartobj,115200);
-    serial_format(&uartobj, 8, ParityNone, 1);
-
+soft_reset:
+    repl_init0();
     mp_stack_ctrl_init();
 
 #if MICROPY_ENABLE_GC
     gc_init(mpHeap, mpHeap + sizeof(mpHeap));
 #endif
+
     mp_init();
     mp_obj_list_init(mp_sys_path, 0);
     mp_obj_list_init(mp_sys_argv, 0);
+
+    modmachine_init();
+    modwireless_init();
+
+    //readline_init0();
     pyexec_frozen_module("boot.py");
+
 #if MICROPY_REPL_EVENT_DRIVEN
     pyexec_event_repl_init();
 #endif
+
     for ( ; ; ) {
         if (pyexec_mode_kind == PYEXEC_MODE_RAW_REPL) {
             if (pyexec_raw_repl() != 0)
                 mp_printf(&mp_plat_print, "soft reboot\n");
+                break;
         } else {
             if (pyexec_friendly_repl() != 0) 
                 mp_printf(&mp_plat_print, "soft reboot\n");
+                break;
         }
     osThreadYield();
-    } 
+    }
+
+    //modwireless_deinit();
+
+goto soft_reset;
+
 }
 
 
@@ -102,7 +115,7 @@ int main (void) {
     BaseType_t xReturn = rtw_create_task(&stUpyTask, MICROPY_TASK_NAME,
             MICROPY_TASK_STACK_DEPTH, MICROPY_TASK_PRIORITY, micropython_task, NULL);
 */
-    osThreadDef(micropython_task, osPriorityRealtime, 1, MICROPY_TASK_STACK_DEPTH);
+    osThreadDef(micropython_task, MICROPY_TASK_PRIORITY, 1, MICROPY_TASK_STACK_DEPTH);
     main_tid = osThreadCreate(osThread(micropython_task), NULL);
 
     osKernelStart();
@@ -132,5 +145,14 @@ MP_DEFINE_CONST_FUN_OBJ_KW(mp_builtin_open_obj, 1, mp_builtin_open);
 void nlr_jump_fail(void *val) {
     mp_printf(&mp_plat_print, "FATAL: uncaught exception %p\r\n", val);
     while(1);
+}
+#endif
+
+#if 0
+void serial_repl_handler(uint32_t id, SerialIrq event) {
+    int data = 0;
+    if (event == RxIrq) {
+        mp_keyboard_interrupt();
+    }
 }
 #endif

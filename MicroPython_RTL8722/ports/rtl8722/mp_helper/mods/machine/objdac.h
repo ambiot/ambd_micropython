@@ -30,7 +30,11 @@
 #include "py/runtime.h"
 #include "py/mphal.h"
 #include "exception.h"
+
+#include "objpin.h"
+#include "analogin_api.h"
 #include "analogout_api.h"
+#include "gpio_ex_api.h"
 
 extern const mp_obj_type_t dac_type;
 

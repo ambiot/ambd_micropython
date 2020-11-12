@@ -7,6 +7,30 @@
 extern "C" {
 #endif
 
+typedef struct
+{
+    uint8_t initial_value;
+    uint32_t total_test_count;
+    uint8_t remote_bd[6];
+    uint32_t total_notify_rx_count;
+    uint32_t begin_time;
+    uint32_t end_time;
+    uint32_t elapsed_time;
+    uint32_t data_rate;
+} TC_206_SUT_MGR;
+
+typedef struct
+{
+    uint8_t initial_value;
+    uint32_t total_test_count;
+    uint8_t remote_bd[6];
+    uint32_t count_remain;
+    uint32_t begin_time;
+    uint32_t end_time;
+    uint32_t elapsed_time;
+    uint32_t data_rate;
+} TC_207_SUT_MGR;
+
 typedef void (*P_FUN_PROFILE_CLIENT_RESULT_CB)(uint8_t conn_id, void *p_data);
 
 typedef enum

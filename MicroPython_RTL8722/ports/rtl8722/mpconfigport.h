@@ -16,6 +16,8 @@
 #define MICROPY_COMP_MODULE_CONST               (1)
 #define MICROPY_COMP_CONST                      (1)
 #define MICROPY_REPL_EVENT_DRIVEN               (0)
+#define MICROPY_PY_BUILTINS_HELP                (1)
+#define MICROPY_PY_BUILTINS_HELP_TEXT           ameba_mp_help_text
 #define MICROPY_COMP_DOUBLE_TUPLE_ASSIGN        (1)
 #define MICROPY_COMP_TRIPLE_TUPLE_ASSIGN        (0)
 #define MICROPY_CPYTHON_COMPAT                  (1)
@@ -33,6 +35,7 @@
 #define MICROPY_REPL_AUTO_INDENT                (1)
 #define MICROPY_ENABLE_EMERGENCY_EXCEPTION_BUF  (1)
 #define MICROPY_MODULE_WEAK_LINKS               (1)
+#define MICROPY_PY_BUILTINS_HELP_MODULES        (0)
 #define MICROPY_PY_BUILTINS_BYTEARRAY           (1)
 #define MICROPY_PY_BUILTINS_MEMORYVIEW          (1)
 #define MICROPY_PY_BUILTINS_ENUMERATE           (1)
@@ -63,6 +66,7 @@
 //#define MICROPY_PY_USSL_FINALISER               (1)
 #define MICROPY_PY_STRUCT                       (1)
 #define MICROPY_PY_SYS                          (1)
+#define MICROPY_PY_SYS_MODULES                  (0)
 #define MICROPY_PY_SYS_STDFILES                 (1)
 #define MICROPY_PY_MACHINE                      (1)
 #define MICROPY_PY_MACHINE_SPI                  (0)
@@ -81,10 +85,12 @@
 
 #define MICROPY_KBD_EXCEPTION                   (1)
 #define MICROPY_PY_TERM_NUM                     (3)
-
+#define MICROPY_PY_WEBREPL                      (0)
+#define GENERIC_ASM_API                         (0)
 #define MICROPY_NLR_SETJMP                      (0)
 #define MICROPY_PY_LWIP_SLIP                    (0)
 #define MICROPY_PY_OS_DUPTERM                   (0)
+#define MICROPY_PY_UOS_DUPTERM_BUILTIN_STREAM   (0)
 #define MICROPY_NLR_X64                         (0)
 
 #define MICROPY_READER_VFS                      (MICROPY_VFS)
@@ -117,40 +123,41 @@
     { MP_OBJ_NEW_QSTR(MP_QSTR_input), MP_OBJ_FROM_PTR(&mp_builtin_input_obj) }, \
     { MP_OBJ_NEW_QSTR(MP_QSTR_open),  MP_OBJ_FROM_PTR(&mp_builtin_open_obj) },  \
 
-extern const struct _mp_obj_module_t mp_module_ameba;
+extern const struct _mp_obj_module_t mp_module_modules;
 extern const struct _mp_obj_module_t mp_module_umachine;
 extern const struct _mp_obj_module_t mp_module_uos;
 extern const struct _mp_obj_module_t mp_module_utime;
-#if xmdebug
-extern const struct _mp_obj_module_t mp_module_uterminal;
 extern const struct _mp_obj_module_t mp_module_uwireless;
+extern const struct _mp_obj_module_t mp_module_usocket;
+#if 0
+extern const struct _mp_obj_module_t mp_module_uterminal;
 extern const struct _mp_obj_module_t mp_module_ussl;
 extern const struct _mp_obj_module_t mp_network_module;
-extern const struct _mp_obj_module_t mp_module_lwip;
 #endif
 
 
 #define MICROPY_PORT_BUILTIN_MODULES \
-    { MP_OBJ_NEW_QSTR(MP_QSTR_ameba),        MP_OBJ_FROM_PTR(&mp_module_ameba) },    \
+    { MP_OBJ_NEW_QSTR(MP_QSTR_modules),      MP_OBJ_FROM_PTR(&mp_module_modules) },    \
     { MP_OBJ_NEW_QSTR(MP_QSTR_umachine),     MP_OBJ_FROM_PTR(&mp_module_umachine) },   \
     { MP_OBJ_NEW_QSTR(MP_QSTR_uos),          MP_OBJ_FROM_PTR(&mp_module_uos) },        \
     { MP_OBJ_NEW_QSTR(MP_QSTR_utime),        MP_OBJ_FROM_PTR(&mp_module_utime) },      \
-/*    { MP_OBJ_NEW_QSTR(MP_QSTR_usocket),      MP_OBJ_FROM_PTR(&mp_module_lwip) },    \
-    { MP_OBJ_NEW_QSTR(MP_QSTR_ussl),         MP_OBJ_FROM_PTR(&mp_module_ussl) },    \
     { MP_OBJ_NEW_QSTR(MP_QSTR_uwireless),    MP_OBJ_FROM_PTR(&mp_module_uwireless) },  \
+    { MP_OBJ_NEW_QSTR(MP_QSTR_usocket),      MP_OBJ_FROM_PTR(&mp_module_usocket) },    \
+/*    { MP_OBJ_NEW_QSTR(MP_QSTR_ussl),         MP_OBJ_FROM_PTR(&mp_module_ussl) },    \
     { MP_OBJ_NEW_QSTR(MP_QSTR_network),      MP_OBJ_FROM_PTR(&mp_network_module) },    \
     { MP_OBJ_NEW_QSTR(MP_QSTR_uterminal),    MP_OBJ_FROM_PTR(&mp_module_uterminal) },   \
 */
 
 #define MICROPY_PORT_BUILTIN_MODULE_WEAK_LINKS \
-    { MP_OBJ_NEW_QSTR(MP_QSTR_mem), MP_OBJ_FROM_PTR(&mp_module_ameba) },  \
-    { MP_OBJ_NEW_QSTR(MP_QSTR_machine), MP_OBJ_FROM_PTR(&mp_module_umachine) },  \
-    { MP_OBJ_NEW_QSTR(MP_QSTR_os),      MP_OBJ_FROM_PTR(&mp_module_uos) },         \
-    { MP_OBJ_NEW_QSTR(MP_QSTR_time),    MP_OBJ_FROM_PTR(&mp_module_utime) },       \
-/*    { MP_OBJ_NEW_QSTR(MP_QSTR_json),    MP_OBJ_FROM_PTR(&mp_module_ujson) },    \
-    { MP_OBJ_NEW_QSTR(MP_QSTR_errno),   MP_OBJ_FROM_PTR(&mp_module_uerrno) },   \
-    { MP_OBJ_NEW_QSTR(MP_QSTR_select),  MP_OBJ_FROM_PTR(&mp_module_uselect) },  \
-    { MP_OBJ_NEW_QSTR(MP_QSTR_wireless), MP_OBJ_FROM_PTR(&mp_module_uwireless) },  \
+    { MP_OBJ_NEW_QSTR(MP_QSTR_module),      MP_OBJ_FROM_PTR(&mp_module_modules) },  \
+    { MP_OBJ_NEW_QSTR(MP_QSTR_machine),     MP_OBJ_FROM_PTR(&mp_module_umachine) },  \
+    { MP_OBJ_NEW_QSTR(MP_QSTR_os),          MP_OBJ_FROM_PTR(&mp_module_uos) },         \
+    { MP_OBJ_NEW_QSTR(MP_QSTR_time),        MP_OBJ_FROM_PTR(&mp_module_utime) },       \
+    { MP_OBJ_NEW_QSTR(MP_QSTR_wireless),    MP_OBJ_FROM_PTR(&mp_module_uwireless) },  \
+    { MP_OBJ_NEW_QSTR(MP_QSTR_socket),    MP_OBJ_FROM_PTR(&mp_module_usocket) },  \
+/*    { MP_OBJ_NEW_QSTR(MP_QSTR_json),        MP_OBJ_FROM_PTR(&mp_module_ujson) },    \
+    { MP_OBJ_NEW_QSTR(MP_QSTR_errno),       MP_OBJ_FROM_PTR(&mp_module_uerrno) },   \
+    { MP_OBJ_NEW_QSTR(MP_QSTR_select),      MP_OBJ_FROM_PTR(&mp_module_uselect) },  \
 */
 
 #define MICROPY_PY_SYS_PLATFORM             "Realtek Ameba"
@@ -168,7 +175,7 @@ extern const struct _mp_obj_module_t mp_module_lwip;
 
 #define MICROPY_TASK_NAME                   "MicroPython"
 #define MICROPY_TASK_STACK_DEPTH            (((20 * 1024) + 512) / sizeof(StackType_t))
-#define MICROPY_TASK_PRIORITY               (1)
+#define MICROPY_TASK_PRIORITY               (3) // 3 for Realtime, the highest priority
 
 #define MICROPY_NETWORK_CORE_STACK_NAME     "TCPIP"
 #define MICROPY_NETWORK_CORE_STACK_DEPTH    (10 * 1024) + 0

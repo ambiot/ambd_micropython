@@ -74,6 +74,31 @@ void mp_obj_timer_irq_handler(timer_obj_t *self) {
     #endif
 }
 
+#if 0
+/// \method callback(fun)
+/// Set the function to be called when the timer triggers.
+/// `fun` is passed 1 argument, the timer object.
+/// If `fun` is `None` then the callback will be disabled.
+STATIC mp_obj_t mp_timer_callback(mp_obj_t self_in, mp_obj_t callback) {
+    pyb_timer_obj_t *self = MP_OBJ_TO_PTR(self_in);
+    if (callback == mp_const_none) {
+        // stop interrupt (but not timer)
+        __HAL_TIM_DISABLE_IT(&self->tim, TIM_IT_UPDATE);
+        self->callback = mp_const_none;
+    } else if (mp_obj_is_callable(callback)) {
+        __HAL_TIM_DISABLE_IT(&self->tim, TIM_IT_UPDATE);
+        self->callback = callback;
+        // start timer, so that it interrupts on overflow, but clear any
+        // pending interrupts which may have been set by initializing it.
+        __HAL_TIM_CLEAR_FLAG(&self->tim, TIM_IT_UPDATE);
+        HAL_TIM_Base_Start_IT(&self->tim); // This will re-enable the IRQ
+        HAL_NVIC_EnableIRQ(self->irqn);
+    } else {
+        mp_raise_ValueError(MP_ERROR_TEXT("callback must be None or a callable object"));
+    }
+    return mp_const_none;
+}
+#endif
 
 STATIC void timer_print(const mp_print_t *print, mp_obj_t self_in, mp_print_kind_t kind) {
     timer_obj_t *self = self_in;

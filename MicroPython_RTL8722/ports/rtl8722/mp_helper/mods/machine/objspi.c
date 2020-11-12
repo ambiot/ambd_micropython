@@ -4,6 +4,7 @@
  * The MIT License (MIT)
  *
  * Copyright (c) 2016 Chester Tseng
+ * Copyright (c) 2020 Simon XI
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -49,9 +50,8 @@ STATIC void spi_print(const mp_print_t *print, mp_obj_t self_in, mp_print_kind_t
 }
 
 
-STATIC mp_obj_t spi_make_new(const mp_obj_type_t *type, mp_uint_t n_args, mp_uint_t n_kw,
-        const mp_obj_t *all_args) {
-    enum { ARG_unit, ARG_baudrate, ARG_pol, ARG_pha, ARG_bits, ARG_firstbit, ARG_miso, ARG_mosi, ARG_sck };
+STATIC mp_obj_t spi_make_new(const mp_obj_type_t *type, mp_uint_t n_args, mp_uint_t n_kw, const mp_obj_t *all_args) {
+    enum { ARG_unit, ARG_baudrate, ARG_pol, ARG_pha, ARG_bits, ARG_firstbit, ARG_miso, ARG_mosi, ARG_sck, ARG_mode };
     const mp_arg_t spi_init_args[] = {
         { MP_QSTR_unit,     MP_ARG_REQUIRED | MP_ARG_INT, {.u_int = 0} },
         { MP_QSTR_baudrate, MP_ARG_INT,                  {.u_int = SPI_DEFAULT_BAUD_RATE} },
@@ -62,6 +62,7 @@ STATIC mp_obj_t spi_make_new(const mp_obj_type_t *type, mp_uint_t n_args, mp_uin
         { MP_QSTR_miso,     MP_ARG_KW_ONLY | MP_ARG_OBJ },
         { MP_QSTR_mosi,     MP_ARG_KW_ONLY | MP_ARG_OBJ },
         { MP_QSTR_sck,      MP_ARG_KW_ONLY | MP_ARG_OBJ },
+        { MP_QSTR_mode,     MP_ARG_INT                 , {.u_int = SPI_MASTER}},
     };
     // parse args
     mp_map_t kw_args;
@@ -72,61 +73,79 @@ STATIC mp_obj_t spi_make_new(const mp_obj_type_t *type, mp_uint_t n_args, mp_uin
     if (args[ARG_unit].u_int > 1)
         mp_raise_ValueError("Invalid SPI unit");
 
-    id = args[ARG_unit].u_int;
-    //printf("id is %d\n", id);
-
-    if (args[ARG_unit].u_int == 0) {
-
-        mp_spi_obj[id].spi_idx = MBED_SPI0;
-        spi_init(&mp_spi_obj[id],  SPI_0_MOSI, SPI_0_MISO, SPI_0_SCLK, SPI_0_CS);
-        spi_format(&mp_spi_obj[id], 8, 0, 0);                      // 8 bits, mode 0[polarity=0,phase=0], and master-role
-        spi_frequency(&mp_spi_obj, SPI_DEFAULT_BAUD_RATE);      // default 2M baud rate
-        //printf("SPI0 init finished\n");
-
-    } else if (args[ARG_unit].u_int == 1) {
-
-        mp_spi_obj[id].spi_idx = MBED_SPI1;
-        spi_init(&mp_spi_obj[id], SPI_1_MOSI, SPI_1_MISO, SPI_1_SCLK, SPI_1_CS);
-        spi_format(&mp_spi_obj[id], 8, 0, 0);
-        spi_frequency(&mp_spi_obj[id], SPI_DEFAULT_BAUD_RATE);
-        //printf("SPI1 init finished\n");
-    }
-
     spi_obj_t *self  = &spi_obj[args[ARG_unit].u_int];
+    id = args[ARG_unit].u_int;
+    self->mode = args[ARG_mode].u_int;
     self->baudrate = args[ARG_baudrate].u_int;
     self->bits     = args[ARG_bits].u_int;
+    
+    if (args[ARG_unit].u_int == 0) {
+        mp_spi_obj[id].spi_idx = MBED_SPI0;  // only MBED_SPI0 can be used as slave
+        spi_init(&mp_spi_obj[id], SPI_0_MOSI, SPI_0_MISO, SPI_0_SCLK, SPI_0_CS);
+    } else {
+        mp_spi_obj[id].spi_idx = MBED_SPI1;
+        spi_init(&mp_spi_obj[id], SPI_1_MOSI, SPI_1_MISO, SPI_1_SCLK, SPI_1_CS);
+    }
+    
+    if (self->mode == SPI_MASTER) {
+        spi_format(&mp_spi_obj[id], 8, 0, SPI_MASTER);       // 8 bits, mode 0[polarity=0,phase=0], and master-role
+        spi_frequency(&mp_spi_obj[id], self->baudrate);      // default 2M baud rate
+    } else {
+        if (mp_spi_obj[id].spi_idx == MBED_SPI0) {
+            spi_format(&mp_spi_obj[id], 8, 0, SPI_SLAVE);        // 8 bits, mode 0[polarity=0,phase=0], and slave-role
+        } else {
+            mp_raise_ValueError("Error: Only SPI 0 can be set as slave");
+        }
+    }
 
     return (mp_obj_t)self;
 }
 
 
-STATIC void spi_stop(mp_obj_base_t *self_in) {
+STATIC mp_obj_t spi_stop(mp_obj_t *self_in) {
     spi_free(&mp_spi_obj[id]);
+    return mp_const_none;
 }
 STATIC MP_DEFINE_CONST_FUN_OBJ_1(spi_stop_obj, spi_stop);
 
 
-STATIC int spi_read(mp_obj_base_t *self_in) {
-    return spi_master_write(&mp_spi_obj[id], NULL);
+STATIC mp_obj_t spi_read(mp_obj_t *self_in) {
+    spi_obj_t *self = self_in;
+    int data = 0;
+
+    if (self->mode == SPI_MASTER) {
+        data = spi_master_write(&mp_spi_obj[id], NULL);
+        return mp_obj_new_int(data);
+    } else {
+        data = spi_slave_read(&mp_spi_obj[id]);
+        return mp_obj_new_int(data);
+    }
 }
 STATIC MP_DEFINE_CONST_FUN_OBJ_1(spi_read_obj, spi_read);
 
 
-STATIC void spi_write(mp_obj_base_t *self_in, mp_obj_t value_in) {
-    spi_obj_t *self = (spi_obj_t*)self_in;
+STATIC void spi_write(mp_obj_t *self_in, mp_obj_t value_in) {
+    spi_obj_t *self = self_in;
     mp_int_t value = mp_obj_get_int(value_in);
 
-    spi_master_write(&mp_spi_obj[id], value);
+    if (self->mode == SPI_MASTER) {
+        spi_master_write(&mp_spi_obj[id], value);
+    } else {
+        spi_slave_write(&mp_spi_obj[id], value);
+    }
+    return mp_const_none;
 }
 STATIC MP_DEFINE_CONST_FUN_OBJ_2(spi_write_obj, spi_write);
 
 
 STATIC const mp_map_elem_t spi_locals_dict_table[] = {
     // basic SPI operations
-    { MP_ROM_QSTR(MP_QSTR_stop), MP_ROM_PTR(&spi_stop_obj) },
+    //{ MP_ROM_QSTR(MP_QSTR_stop), MP_ROM_PTR(&spi_stop_obj) },
     { MP_ROM_QSTR(MP_QSTR_read), MP_ROM_PTR(&spi_read_obj) },
     { MP_ROM_QSTR(MP_QSTR_write), MP_ROM_PTR(&spi_write_obj) },
-
+    // class constants
+    { MP_OBJ_NEW_QSTR(MP_QSTR_MASTER),    MP_OBJ_NEW_SMALL_INT(SPI_MASTER) },
+    { MP_OBJ_NEW_QSTR(MP_QSTR_SLAVE),     MP_OBJ_NEW_SMALL_INT(SPI_SLAVE) },
 };
 STATIC MP_DEFINE_CONST_DICT(spi_locals_dict, spi_locals_dict_table);
 

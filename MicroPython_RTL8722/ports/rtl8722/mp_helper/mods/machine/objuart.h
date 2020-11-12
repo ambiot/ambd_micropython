@@ -30,7 +30,7 @@
 
 #include "serial_api.h"
 
-#define UART_MIN_BAUDRATE          (4800)
+#define UART_MIN_BAUDRATE          (9600)
 #define UART_MAX_BAUDRATE          (115200)
 
 #define UART_DEFAULT_BAUDRATE       (115200)

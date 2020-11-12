@@ -3,7 +3,7 @@
 
 #ifndef __ASSEMBLY__
 
-#define BTC_LEAPY_AP_LIMIT 3
+#define BTC_LEAPY_AP_LIMIT 1
 
 extern void 
 InitBTMailbox_8721D_RAM(
@@ -90,7 +90,12 @@ BT_TDMA_Slot_Operation_2and5_8721D(
 extern void
 BTypeTDMATimeOuthdl_8721D(
     void
-) ;
+);
+
+extern void
+LeapyAPExtension(
+    IN	u8	slot_num
+);
 
 extern void 
 LeapyAPCount(
