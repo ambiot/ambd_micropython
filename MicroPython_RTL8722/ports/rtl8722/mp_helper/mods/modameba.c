@@ -34,16 +34,24 @@
 
 #include "py/objint.h"
 
+extern const struct _mp_obj_module_t mp_module_umachine;
+extern const struct _mp_obj_module_t mp_module_uos;
+extern const struct _mp_obj_module_t mp_module_utime;
+extern const struct _mp_obj_module_t mp_module_uwireless;
+extern const struct _mp_obj_module_t mp_module_usocket;
+
 STATIC const mp_map_elem_t ameba_module_globals_table[] = {
-    { MP_OBJ_NEW_QSTR(MP_QSTR___name__), MP_OBJ_NEW_QSTR(MP_QSTR_ameba) },
-    { MP_ROM_QSTR(MP_QSTR_mem8),         (mp_obj_t)&machine_mem8_obj },
-    { MP_ROM_QSTR(MP_QSTR_mem16),        (mp_obj_t)&machine_mem16_obj },
-    { MP_ROM_QSTR(MP_QSTR_mem32),        (mp_obj_t)&machine_mem32_obj },
+    { MP_OBJ_NEW_QSTR(MP_QSTR___name__), 	MP_OBJ_NEW_QSTR(MP_QSTR_modules) },
+    { MP_OBJ_NEW_QSTR(MP_QSTR_machine),     MP_OBJ_FROM_PTR(&mp_module_umachine) },   
+    { MP_OBJ_NEW_QSTR(MP_QSTR_os),          MP_OBJ_FROM_PTR(&mp_module_uos) },        
+    { MP_OBJ_NEW_QSTR(MP_QSTR_time),        MP_OBJ_FROM_PTR(&mp_module_utime) },   
+    { MP_OBJ_NEW_QSTR(MP_QSTR_wireless),    MP_OBJ_FROM_PTR(&mp_module_uwireless) },
+    { MP_OBJ_NEW_QSTR(MP_QSTR_socket),    MP_OBJ_FROM_PTR(&mp_module_usocket) },
 };
 
 STATIC MP_DEFINE_CONST_DICT(ameba_module_globals, ameba_module_globals_table);
 
-const mp_obj_module_t mp_module_ameba = {
+const mp_obj_module_t mp_module_modules = {
     .base = { &mp_type_module },
     .globals = (mp_obj_dict_t*)&ameba_module_globals,
 };

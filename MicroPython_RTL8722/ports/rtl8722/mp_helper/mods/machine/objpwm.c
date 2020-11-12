@@ -44,19 +44,24 @@ STATIC void pwm_print(const mp_print_t *print, mp_obj_t self_in, mp_print_kind_t
     mp_printf(print, "PWM(%d, pin=%q)", self->unit, self->pin->name);
 }
 
+
+#if 0
 STATIC mp_obj_t pwm_period(mp_obj_t self_in, mp_obj_t msec_in) {
     pwm_obj_t *self = self_in;
     pwmout_period_ms(&(self->obj), mp_obj_new_int(msec_in));
     return mp_const_none;
 }
 STATIC MP_DEFINE_CONST_FUN_OBJ_2(pwm_period_obj, pwm_period);
+#endif
 
-STATIC mp_obj_t pwm_pulsewidth(mp_obj_t self_in, mp_obj_t msec_in) {
+
+STATIC mp_obj_t pwm_write(mp_obj_t self_in, mp_float_t dutycycle) {
     pwm_obj_t *self = self_in;
-    pwmout_pulsewidth_ms(&(self->obj), mp_obj_new_int(msec_in));
+    pwmout_write(&(self->obj), dutycycle);
     return mp_const_none;
 }
-STATIC MP_DEFINE_CONST_FUN_OBJ_2(pwm_pulsewidth_obj, pwm_pulsewidth);
+STATIC MP_DEFINE_CONST_FUN_OBJ_2(pwm_write_obj, pwm_write);
+
 
 STATIC mp_obj_t pwm_make_new(const mp_obj_type_t *type, mp_uint_t n_args, mp_uint_t n_kw, const mp_obj_t *all_args) {
     enum { ARG_unit, ARG_pin};
@@ -81,14 +86,14 @@ STATIC mp_obj_t pwm_make_new(const mp_obj_type_t *type, mp_uint_t n_args, mp_uin
     self->pin = pin;
 
     pwmout_init(&(self->obj), self->pin->id);
-
+    pwmout_write(&(self->obj), 0.0);
     return (mp_obj_t)self;
 }
 
 STATIC const mp_map_elem_t pwm_locals_dict_table[] = {
     // instance methods
-    { MP_OBJ_NEW_QSTR(MP_QSTR_period),     MP_OBJ_FROM_PTR(&pwm_period_obj) },
-    { MP_OBJ_NEW_QSTR(MP_QSTR_pulsewidth), MP_OBJ_FROM_PTR(&pwm_pulsewidth_obj) },
+    //{ MP_OBJ_NEW_QSTR(MP_QSTR_period),     MP_OBJ_FROM_PTR(&pwm_period_obj) },
+    { MP_OBJ_NEW_QSTR(MP_QSTR_write), MP_OBJ_FROM_PTR(&pwm_write_obj) },
 };
 STATIC MP_DEFINE_CONST_DICT(pwm_locals_dict, pwm_locals_dict_table);
 

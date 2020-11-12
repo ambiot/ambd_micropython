@@ -34,6 +34,8 @@
 
 #include "objpin.h"
 #include "analogin_api.h"
+#include "analogout_api.h"
+#include "gpio_ex_api.h"
 
 extern const mp_obj_type_t adc_type;
 
@@ -41,7 +43,7 @@ typedef struct {
     mp_obj_base_t base;
     analogin_t    obj;
     uint8_t       unit;
-    uint16_t      pin;
+    PinName      pin;
 } adc_obj_t;
 
 #endif  // OBJADC_H_

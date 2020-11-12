@@ -15,7 +15,7 @@ extern "C" {
 #endif
 
 /* task & isr context check interface */
-static inline bool osif_task_context_check(void);
+//static inline bool osif_task_context_check(void);
 
 /* OS schedule interfaces */
 void osif_delay(uint32_t ms);
@@ -78,6 +78,8 @@ bool osif_timer_stop(void **pp_handle);
 bool osif_timer_delete(void **pp_handle);
 bool osif_timer_dump(void);
 bool osif_timer_state_get(void **pp_handle, uint32_t *p_timer_state);
+
+void osif_create_secure_context(uint32_t size);
 
 #ifdef __cplusplus
 }

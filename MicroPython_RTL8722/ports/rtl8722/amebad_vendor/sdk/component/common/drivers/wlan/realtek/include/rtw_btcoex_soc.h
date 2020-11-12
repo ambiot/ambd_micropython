@@ -22,6 +22,27 @@
 
 #include <drv_types.h>
 
+//bt state
+enum {
+	COEX_STATE_BT_OFF = 0,
+	COEX_STATE_BT_ON = 0x01,
+	COEX_STATE_BLE_SCAN =0x02,
+	COEX_STATE_BT_MAX
+};
+
+//wifi state
+enum {
+	COEX_STATE_WIFI_OFF = 0,
+	COEX_STATE_WIFI_STA_UNCONNECTED = 0x01,
+	COEX_STATE_WIFI_STA_SCAN = 0x02,
+	COEX_STATE_WIFI_STA_CONNECTING = 0x03,
+	COEX_STATE_WIFI_STA_FOUR_WAY_DOING = 0x04,
+	COEX_STATE_WIFI_STA_CONNECTED = 0x05,
+	COEX_STATE_WIFI_AP_IDLE = 0x06,
+	COEX_STATE_WIFI_OTHER_MODE = 0x07,
+	COEX_STATE_WIFI_MAX
+};
+
 //wifi event
 enum {
 	COEX_EVENT_WIFI_OFF = 0,
@@ -33,9 +54,12 @@ enum {
 	COEX_EVENT_WIFI_JOIN_FAIL = 6,
 	COEX_EVENT_WIFI_DISCONNECT = 7,
 	COEX_EVENT_WIFI_CHANGE_MODE = 8,
-
+	COEX_EVENT_WIFI_FOURWAY_DONE = 9,
 	COEX_EVENT_WIFI_MAX
 };
+/**
+  * @brief  The enumeration is coex state indicated from wlan driver.
+  */
 
 struct mailbox_info {
 	u8	id;

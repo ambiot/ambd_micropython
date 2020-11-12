@@ -110,13 +110,11 @@ STATIC mp_obj_t pin_obj_init_helper(pin_obj_t *self, mp_uint_t n_args, const mp_
     }
 
     // get the value, default is 0
-    int value = -1;
+    int value = 0;
     if (args[2].u_obj != MP_OBJ_NULL) {
         if (mp_obj_is_true(args[2].u_obj)) {
             value = 1;
-        } else {
-            value = 0;
-        }
+        } 
     }
 
     // config the pin object 
@@ -128,10 +126,8 @@ STATIC mp_obj_t pin_obj_init_helper(pin_obj_t *self, mp_uint_t n_args, const mp_
     gpio_dir((gpio_t *)&(self->obj), self->mode);
     gpio_mode((gpio_t *)&(self->obj), self->pull);
 
-    if (value != -1) {
-        self->value = value;
-        gpio_write(&(self->obj), self->value);
-    }
+    self->value = value;
+    gpio_write(&(self->obj), self->value);
 
     return mp_const_none;
 }

@@ -20,7 +20,7 @@ $(info ## This build only supports Cygwin and Linux!)
 # Declaring tools depending on OS
 # Windows Cygwin
 ifeq ($(findstring CYGWIN, $(OS)), CYGWIN) 
-TC_PATH := amebad_tool/toolchain/cygwin/ameba_d_toolchain_windows/bin/
+TC_PATH := amebad_tool/toolchain/cygwin/asdk-6.5.0/bin/
 CROSS_COMPILE := arm-none-eabi-
 AR = $(TC_PATH)$(CROSS_COMPILE)ar.exe
 CC = $(TC_PATH)$(CROSS_COMPILE)gcc.exe
@@ -37,7 +37,7 @@ IMAGETOOL = amebad_image_tool.exe
 PICK = pick.exe
 PAD  = pad.exe
 BUILDTOOL_PATH := tools/windows
-UPLOAD_PATH := COM8
+UPLOAD_PATH := COM4
 POSTBUILDTOOL_PATH := amebad_tool/tools/windows
 MPY_CROSS = $(TOP)/mpy-cross/mpy-cross.exe
 LINKER_SCRIPT = amebad_vendor/linker_script

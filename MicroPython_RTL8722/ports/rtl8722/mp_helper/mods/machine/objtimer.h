@@ -44,6 +44,7 @@ typedef struct {
     mp_obj_base_t base;
     gtimer_t obj;
     uint32_t id;
+    uint8_t type;
     mp_obj_t callback;
 } timer_obj_t;
 

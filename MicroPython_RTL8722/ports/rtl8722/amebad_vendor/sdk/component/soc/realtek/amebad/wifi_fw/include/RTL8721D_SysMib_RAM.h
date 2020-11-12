@@ -375,7 +375,6 @@ typedef struct _S1_null1_ivl_patch_{
         H2C_S1_null1_ctrl_parm s1_null1_ctrl_parm;
 }S1_null1_ivl_patch, *PS1_null1_ivl_patch;
 
-
 typedef struct _BT_B_TYPE_TDMA_Parm_8721D_ {
 
     //20200116
@@ -385,6 +384,8 @@ typedef struct _BT_B_TYPE_TDMA_Parm_8721D_ {
     u8      TDMASlotToggleCount;
     u8      LeapyAPCountForObservation;
 
+    u8      NullTypeTDMA;
+    u8      Null_P_PacketSend;
 } BT_B_TYPE_TDMA_Parm_8721D, *PBT_B_TYPE_TDMA_Parm_8721D;
 
 
@@ -394,7 +395,6 @@ typedef struct _mib_info_8721D_ {
     #if CONFIG_BT_MAILBOX
     BT_B_TYPE_TDMA_Parm_8721D   BtTdmaParm8721D;
     #endif
-
 }mib_info_8721D, *Pmib_info_8721D;
 
 
