@@ -5,6 +5,17 @@
 ####################################################
 
 
+#RTL8722 MicroPython SDK release V1.0.0  12/11/2020
+- Added help function and help message
+- Update Ameba SDK and toolchain
+- Update readme documentation
+- Fix bugs found in alpha release
+- Implemented network helper modules:
+    - WiFi
+    - Socket
+- Provide examples for all peripheral and network modules
+
+
 #RTL8722 MicroPython SDK release V0.0.1(Alpha)  29/09/2020
 - Ported basic MicroPython functions 
 - Implemented REPL and basic terminal functions
