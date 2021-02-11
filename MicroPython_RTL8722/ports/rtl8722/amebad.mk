@@ -190,7 +190,7 @@ LIBFLAGS = -Wl,--no-enum-size-warning -Wl,--warn-common
 LIBAR += -Wl,--start-group
 LIBAR += -L$(VENDOR)/../ARCHIVE_LIB/ -l_arduino -l_wlan -l_wps -l_wifi_ucps_fw 
 LIBAR += -l_wifi_fw -l_websocket -l_user -l_usbh -l_usbd -l_tftp -l_mdns -l_m4a_self 
-LIBAR += -l_httpd -l_httpc -l_eap -l_dct -l_coap -l_cmsis_dsp -l_bt 
+LIBAR += -l_httpd -l_httpc -l_eap -l_dct -l_coap -l_cmsis_dsp -l_bt -l_mbedtls240 
 LIBAR += -Wl,--end-group
 
 
