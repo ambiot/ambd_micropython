@@ -46,6 +46,7 @@
 #include "serial_api.h"
 #include "main.h"
 #include "lib/utils/interrupt_char.h"
+#include "modsdfs.h"
 
 
 
@@ -81,6 +82,18 @@ soft_reset:
 
     modmachine_init();
     modwireless_init();
+
+    // Initialise the local flash filesystem.
+    bool mounted_flash = false;
+
+    // Init File System on SD card is available 
+    mounted_flash = init_sd_fs();
+
+    if (!mounted_flash) {
+        printf("[DRIVER]: file system mounted\n");
+    } else {
+        printf("[DRIVER]: Error occured while mounting file system\n");
+    }
 
     //readline_init0();
     pyexec_frozen_module("boot.py");

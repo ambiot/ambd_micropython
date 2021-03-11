@@ -268,7 +268,7 @@ STATIC int pyexec_friendly_repl_process_char(int c) {
         } else if (ret == CHAR_CTRL_B) {
             // reset friendly REPL
             mp_hal_stdout_tx_str("\r\n");
-            mp_hal_stdout_tx_str("MicroPython " MICROPY_GIT_TAG " on " MICROPY_BUILD_DATE "; " MICROPY_HW_BOARD_NAME " with " MICROPY_HW_MCU_NAME "\r\n");
+            mp_hal_stdout_tx_str("MicroPython " MICROPY_HW_MCU_NAME MICROPY_HW_PORT_VERSION  " by " MICROPY_PY_SYS_PLATFORM "; Commit:"  MICROPY_GIT_TAG " on " MICROPY_BUILD_DATE "\r\n");
             #if MICROPY_PY_BUILTINS_HELP
             mp_hal_stdout_tx_str("Type \"help()\" for more information.\r\n");
             #endif
@@ -415,7 +415,7 @@ int pyexec_friendly_repl(void) {
 #endif
 
 friendly_repl_reset:
-    mp_hal_stdout_tx_str("MicroPython " MICROPY_GIT_TAG " on " MICROPY_BUILD_DATE "; " MICROPY_HW_BOARD_NAME " with " MICROPY_HW_MCU_NAME "\r\n");
+    mp_hal_stdout_tx_str("MicroPython " MICROPY_HW_MCU_NAME " V" MICROPY_HW_PORT_VERSION  " by " MICROPY_PY_SYS_PLATFORM "; Commit: "  MICROPY_GIT_TAG " on " MICROPY_BUILD_DATE "\r\n");
     #if MICROPY_PY_BUILTINS_HELP
     mp_hal_stdout_tx_str("Type \"help()\" for more information.\r\n");
     #endif

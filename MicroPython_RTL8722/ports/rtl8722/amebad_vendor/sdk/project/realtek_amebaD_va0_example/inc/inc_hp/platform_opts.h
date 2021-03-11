@@ -487,6 +487,26 @@
 #endif
 #endif
 
+
+/******************  For MicroPython SDK custom config   *******************/
+#ifdef MICROPYTHON_RTL8721D
+
+/* For FATFS*/
+#define CONFIG_FATFS_EN	1
+#if CONFIG_FATFS_EN
+// fatfs version
+#define FATFS_R_10C
+// fatfs disk interface
+#define FATFS_DISK_USB	0
+#define FATFS_DISK_SD 	1
+#define FATFS_DISK_FLASH 	0
+#endif
+
+#endif
+/****************** End of MicroPython SDK custom config *******************/
+
+
+
 /* For iNIC host example*/
 #ifdef CONFIG_INIC_GSPI_HOST //this flag is defined in IAR project
 #define	CONFIG_EXAMPLE_INIC_GSPI_HOST	1

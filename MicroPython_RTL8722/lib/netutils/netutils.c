@@ -37,9 +37,12 @@ mp_obj_t netutils_format_ipv4_addr(uint8_t *ip, netutils_endian_t endian) {
     char ip_str[16];
     mp_uint_t ip_len;
     if (endian == NETUTILS_LITTLE) {
-        ip_len = snprintf(ip_str, 16, "%u.%u.%u.%u", ip[3], ip[2], ip[1], ip[0]);
+        //ip_len = snprintf(ip_str, 16, "%u.%u.%u.%u", ip[3], ip[2], ip[1], ip[0]); //xxm
+        ip_len = snprintf(ip_str, 16, "%d.%d.%d.%d", ip[3], ip[2], ip[1], ip[0]);
     } else {
-        ip_len = snprintf(ip_str, 16, "%u.%u.%u.%u", ip[0], ip[1], ip[2], ip[3]);
+        //ip_len = snprintf(ip_str, 16, "%u.%u.%u.%u", ip[0], ip[1], ip[2], ip[3]); //xxm
+        ip_len = snprintf(ip_str, 16, "%d.%d.%d.%d", ip[0], ip[1], ip[2], ip[3]);
+
     }
     return mp_obj_new_str(ip_str, ip_len);
 }

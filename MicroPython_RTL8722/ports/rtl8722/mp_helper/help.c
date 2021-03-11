@@ -45,4 +45,7 @@ const char ameba_mp_help_text[] =
 "For further help on a specific object, type help(obj)\n"
 "To find out all available built-in modules, type help(modules)\n"
 "\n"
+"For quick WiFi test, type\n"
+"WLAN(WLAN.STA).scan()\n"
+"\n"
 ;
