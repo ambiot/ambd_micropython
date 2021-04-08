@@ -310,4 +310,3 @@ $(IMAGETOOL):
 	$(Q)cp -f $(TOOL)/image/km0_boot_all.bin ./
 	$(Q)cp -f $(TOOL)/image/km0_image2_all.bin ./
 	$(Q)cp -f $(TOOL)/image/km4_boot_all.bin ./
-	$(Q)cp -f $(BUILD)/km0_km4_image2.bin ./
