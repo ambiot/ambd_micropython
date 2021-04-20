@@ -260,11 +260,11 @@ STATIC mp_obj_t wlan_scan(mp_obj_t self_in) {
     uint8_t attempts = 10;
     uint8_t numOfNetworks = 0;
 
-    if(getConnectionStatus() != WL_NO_SHIELD) {
-
+    if(getConnectionStatus()) {
+        mp_hal_delay_ms(1000);
         if (startScanNetworks() == WL_FAILURE) {
-            printf("\n## WiFi scan network returned FAIL\n");
-            mp_raise_ValueError("Scan error!");
+            printf("\n## WiFi scan network returned FAIL \n\r");
+            mp_raise_ValueError("Scan errorrr!");
             return mp_const_none;
         }
 
@@ -272,12 +272,10 @@ STATIC mp_obj_t wlan_scan(mp_obj_t self_in) {
              mp_hal_delay_ms(2000);
              numOfNetworks = _networkCount;
         } while ((numOfNetworks == 0) && (--attempts > 0));
-
     } else {
-        printf("WiFi shield not present\n");
+        printf("WiFi not init \n\r");
         mp_raise_ValueError("Scan error!");
     }
-
 
     if (numOfNetworks == -1) { //if scan fail
         printf("Could not find available wifi\n");
@@ -296,7 +294,9 @@ STATIC mp_obj_t wlan_scan(mp_obj_t self_in) {
             printEncryptionType(_networkEncr[thisNet]);
         }
     }
-    
+
+    mp_hal_delay_ms(2000);
+
     return mp_const_none;
 }
 STATIC MP_DEFINE_CONST_FUN_OBJ_1(wlan_scan_obj, wlan_scan);
