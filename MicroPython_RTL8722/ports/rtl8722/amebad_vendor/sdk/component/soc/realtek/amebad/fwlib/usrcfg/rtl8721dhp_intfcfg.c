@@ -22,7 +22,7 @@
 
 
 PSRAMCFG_TypeDef psram_dev_config = {
-	.psram_dev_enable = FALSE,			//enable psram
+	.psram_dev_enable = TRUE,			//enable psram
 	.psram_dev_cal_enable = FALSE,			//enable psram calibration function
 	.psram_dev_retention = FALSE,			//enable psram retention
 };

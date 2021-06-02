@@ -202,12 +202,21 @@ void wifi_indication( rtw_event_indicate_t event, char *buf, int buf_len, int fl
 			printf("\n\r%s(): WIFI_EVENT_CHALLENGE_FAIL\n", __func__);
 #endif
 			break;
+		case WIFI_EVENT_SOFTAP_START:
+#if(WIFI_INDICATE_MSG==1)
+			printf("\n\r%s(): WIFI_EVENT_SOFTAP_START\n", __func__);
+#endif
+			break;
+		case WIFI_EVENT_SOFTAP_STOP:
+#if(WIFI_INDICATE_MSG==1)
+			printf("\n\r%s(): WIFI_EVENT_SOFTAP_STOP\n", __func__);
+#endif
+			break;
+
 	}
 
 #if CONFIG_INIC_EN
-#ifndef CONFIG_INIC_IPC
 	inic_indicate_event(event, buf, buf_len, flags);
-#endif
 #endif//CONFIG_INIC_EN
 
 #if CONFIG_WIFI_IND_USE_THREAD

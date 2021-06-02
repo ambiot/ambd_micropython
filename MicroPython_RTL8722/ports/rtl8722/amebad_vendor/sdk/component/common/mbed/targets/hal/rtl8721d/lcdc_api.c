@@ -51,7 +51,7 @@ static int _log2(int n){
 	}
 	return a;
 }
-
+
 /**
   * @brief    Initializes the LCDC peripheral.
   * @param  obj: lcdc object define in application software.

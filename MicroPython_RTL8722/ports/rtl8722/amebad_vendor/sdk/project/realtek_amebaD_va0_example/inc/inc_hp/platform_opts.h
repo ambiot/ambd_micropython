@@ -83,13 +83,16 @@
 #define CONFIG_TRANSPORT	0//on or off the at command for transport socket
 #define CONFIG_ALINK			0//on or off for alibaba alink
 #define CONFIG_HILINK			0//on or off for huawei hilink
+#define CONFIG_RIC			0//on or off for RICloud
 
 //#define CONFIG_BAIDU_DUER	1
 #define CONFIG_DMIC_SEL	0
 /* For WPS and P2P */
 #define CONFIG_ENABLE_WPS		1
 #define CONFIG_ENABLE_P2P		0//on/off p2p cmd in log_service or interactive mode
-#define CONFIG_ENABLE_WPS_DISCOVERY	0
+#if CONFIG_ENABLE_WPS
+#define CONFIG_ENABLE_WPS_DISCOVERY	1
+#endif
 #if CONFIG_ENABLE_P2P
 #define CONFIG_ENABLE_WPS_AP		1
 #undef CONFIG_WIFI_IND_USE_THREAD
@@ -128,6 +131,11 @@
 #endif
 
 #define CONFIG_JOINLINK    0
+
+/*For MIMO pkt decode*/
+#define CONFIG_UNSUPPORT_PLCPHDR_RPT	0
+
+#define CONFIG_EXAMPLE_CM_BACKTRACE 0
 
 #endif //end of #if CONFIG_WLAN
 /*******************************************************************************/
@@ -174,20 +182,24 @@
 #endif
 /******************End of iNIC configurations*******************/
 
-/**
- * For CONFIG_LWIP_LAYER_OFF configurations
- */
-#if defined (CONFIG_LWIP_LAYER_OFF) && CONFIG_LWIP_LAYER_OFF
-#define CONFIG_ATCMD_MP				0 //support MP AT command
-#define CONFIG_LWIP_LAYER	0
-#define CONFIG_INIT_NET		0 //init lwip layer when start up
-
-/* For Simple Link */
-#define CONFIG_INCLUDE_SIMPLE_CONFIG		0
-
-/*For fast reconnection*/
-#define CONFIG_EXAMPLE_WLAN_FAST_CONNECT	0
+/* For Azure Examples */
+#define CONFIG_USE_AZURE_EMBEDDED_C        1
+#if CONFIG_USE_AZURE_EMBEDDED_C
+/* For Azure embedded iot examples*/
+#define CONFIG_EXAMPLE_AZURE   0
+#if CONFIG_EXAMPLE_AZURE
+#undef WAIT_FOR_ACK
+#define WAIT_FOR_ACK
 #endif
+#else
+/* For Azure iot hub telemetry example*/
+#define CONFIG_EXAMPLE_AZURE_IOTHUB_TELEMETRY      0
+/* For Azure iot hub x509 example*/
+#define CONFIG_EXAMPLE_AZURE_IOTHUB_X509     0
+#endif
+
+/* For Amazon FreeRTOS SDK example */
+#define CONFIG_EXAMPLE_AMAZON_FREERTOS   0
 
 /* For aj_basic_example */
 #define CONFIG_EXAMPLE_AJ_BASIC          0
@@ -206,12 +218,15 @@
 
 /* For cJSON example */
 #define CONFIG_EXAMPLE_CJSON         0
-
+   
 /* For HTTP CLIENT example */
 #define CONFIG_EXAMPLE_HTTP_CLIENT  0
 
 /* For HTTP2 CLIENT example */
 #define CONFIG_EXAMPLE_HTTP2_CLIENT	0
+
+/* For HTTP2 SSL CLIENT example */
+#define CONFIG_EXAMPLE_HTTP2_SSL_CLIENT 0
 
 /* For HTTPC example */
 #define CONFIG_EXAMPLE_HTTPC	0
@@ -220,18 +235,21 @@
 #define CONFIG_EXAMPLE_HTTPD	0
 
 /* For MQTT example */
-#define CONFIG_EXAMPLE_MQTT		0
+#define CONFIG_EXAMPLE_MQTT				0
 
 /* for CoAP example*/
 #define CONFIG_EXAMPLE_COAP		0
 
+/* for CoAP DTLS client example */
+#define CONFIG_EXAMPLE_COAP_DTLS_CLIENT		0
+
+/* for CoAP DTLS server example */
+#define CONFIG_EXAMPLE_COAP_DTLS_SERVER		0
+
+
 /* for lib CoAP example*/ 
 #define CONFIG_EXAMPLE_COAP_SERVER        0
 #define CONFIG_EXAMPLE_COAP_CLIENT        0
-#if CONFIG_EXAMPLE_COAP_SERVER || CONFIG_EXAMPLE_COAP_CLIENT
-#undef CONFIG_EXAMPLE_WLAN_FAST_CONNECT
-#define CONFIG_EXAMPLE_WLAN_FAST_CONNECT 0
-#endif
 
 /* For WiGadget example */
 #define CONFIG_EXAMPLE_WIGADGET			0
@@ -271,6 +289,9 @@
 
 /* For sd card ota update example */
 #define CONFIG_EXAMPLE_OTA_SDCARD    0
+#if CONFIG_EXAMPLE_OTA_SDCARD
+#define FATFS_DISK_SD 	1
+#endif
 
 /* For sdcard upload web server example */
 #define CONFIG_SDCARD_UPLOAD_HTTPD  0
@@ -295,6 +316,7 @@
 
 /* For websocket client example */
 #define CONFIG_EXAMPLE_WEBSOCKET_CLIENT 	0
+
 /* For websocket server example */
 #define CONFIG_EXAMPLE_WEBSOCKET_SERVER 	0
 
@@ -309,6 +331,12 @@
 
 /*For wifi roaming plus example*/
 #define CONFIG_EXAMPLE_WIFI_ROAMING_PLUS		0
+
+/* For tickless wifi roaming examples */
+#define CONFIG_EXAMPLE_TICKLESS_WIFI_ROAMING 	0
+
+/*For wifi connection priority example*/
+#define CONFIG_EXAMPLE_CONN_PRI_COND			0
 
 /* For dct example */
 #define CONFIG_EXAMPLE_DCT			0
@@ -487,26 +515,6 @@
 #endif
 #endif
 
-
-/******************  For MicroPython SDK custom config   *******************/
-#ifdef MICROPYTHON_RTL8721D
-
-/* For FATFS*/
-#define CONFIG_FATFS_EN	1
-#if CONFIG_FATFS_EN
-// fatfs version
-#define FATFS_R_10C
-// fatfs disk interface
-#define FATFS_DISK_USB	0
-#define FATFS_DISK_SD 	1
-#define FATFS_DISK_FLASH 	0
-#endif
-
-#endif
-/****************** End of MicroPython SDK custom config *******************/
-
-
-
 /* For iNIC host example*/
 #ifdef CONFIG_INIC_GSPI_HOST //this flag is defined in IAR project
 #define	CONFIG_EXAMPLE_INIC_GSPI_HOST	1
@@ -601,6 +609,10 @@ in lwip_opt.h for support uart adapter*/
 //#define CONFIG_EXAMPLE_COMPETITIVE_HEADPHONES_DONGLE	1
 #endif
 
+#if defined(CONFIG_USBD_HID)
+#define CONFIG_EXAMPLE_USBD_HID         1
+#endif
+
 #if defined(CONFIG_USBD_MSC)
 #define CONFIG_EXAMPLE_USBD_MSC         1
 #endif
@@ -654,6 +666,14 @@ in lwip_opt.h for support uart adapter*/
 #define CONFIG_EXAMPLE_USBH_VENDOR      1
 #endif
 
+#if defined(CONFIG_USBH_CDC_ACM)
+#if defined(CONFIG_USBH_CDC_ACM_VERIFY)
+#define CONFIG_EXAMPLE_USBH_CDC_ACM_VERIFY 1
+#else
+#define CONFIG_EXAMPLE_USBH_CDC_ACM      1
+#endif
+#endif
+
 //#define CONFIG_EXAMPLE_COMPETITIVE_HEADPHONES		1
 
 /* For fast DHCP */
@@ -663,9 +683,31 @@ in lwip_opt.h for support uart adapter*/
 #define CONFIG_FAST_DHCP 0
 #endif
 
+/* For wlan repeater example */
+#define CONFIG_EXAMPLE_WLAN_REPEATER    0
+#if CONFIG_EXAMPLE_WLAN_REPEATER
+#define CONFIG_BRIDGE                   1
+#undef CONFIG_EXAMPLE_WLAN_FAST_CONNECT
+#define CONFIG_EXAMPLE_WLAN_FAST_CONNECT 1
+#else
+#define CONFIG_BRIDGE                   0
+#endif
+
 // zzw arduino
 /******************  For Arduino SDK customize config   *******************/
 #ifdef ARDUINO_SDK
+
+/* For FATFS*/
+#define CONFIG_FATFS_EN	1
+#if CONFIG_FATFS_EN
+// fatfs version
+#define FATFS_R_10C
+// fatfs disk interface
+#define FATFS_DISK_USB	0
+#define FATFS_DISK_SD 	1
+#define FATFS_DISK_FLASH 	0
+#endif
+
 #endif
 /****************** End of Arduino SDK customize config *******************/
 

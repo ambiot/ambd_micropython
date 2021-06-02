@@ -303,7 +303,6 @@ int tcp_server_func(struct iperf_data_t iperf_data)
 	}
 
 	start_time = xTaskGetTickCount();
-	end_time = start_time;
 	report_start_time = start_time;
 	while (!g_tcp_terminate) {
 		recv_size = recv(iperf_data.client_fd, tcp_server_buffer, iperf_data.buf_size, 0);  //MSG_DONTWAIT   MSG_WAITALL
@@ -322,12 +321,12 @@ int tcp_server_func(struct iperf_data_t iperf_data)
 		total_size+=recv_size;
 		report_size+=recv_size;
 		if((iperf_data.report_interval != DEFAULT_REPORT_INTERVAL) && ((end_time - report_start_time) >= (configTICK_RATE_HZ * iperf_data.report_interval))) {
-			printf("\n\r%s: Receive %d KBytes in %d ms, %d Kbits/sec",__func__, (uint32_t) (report_size/KB),(uint32_t) (end_time-report_start_time),(uint32_t) ((uint64_t)(report_size*8)/(end_time - report_start_time)));
+			printf("\n\r%s: Receive %d KBytes in %d ms, %d Kbits/sec",__func__, (uint32_t) (report_size/KB),(uint32_t) (end_time-report_start_time),((uint32_t) (report_size*8)/(end_time - report_start_time)));
 			report_start_time = end_time;
 			report_size = 0;
 		}
 	}
-	printf("\n\r%s: [END] Totally receive %d KBytes in %d ms, %d Kbits/sec",__func__, (uint32_t) (total_size/KB),(uint32_t) (end_time-start_time),(uint32_t) ((uint64_t)(total_size*8)/(end_time - start_time)));
+	printf("\n\r%s: [END] Totally receive %d KBytes in %d ms, %d Kbits/sec",__func__, (uint32_t) (total_size/KB),(uint32_t) (end_time-start_time),((uint32_t) (total_size*8)/(end_time - start_time)));
 
 Exit1:
 	// close the connected socket after receiving from connected TCP client
@@ -387,7 +386,7 @@ int udp_client_func(struct iperf_data_t iperf_data)
 		printf("\n\r[ERROR] %s: Set sockopt failed", __func__);
 		goto Exit1;
 	}
-
+	
 	client_hdr.numThreads = htonl(0x00000001);
 	client_hdr.mPort = htonl(iperf_data.port);
 	client_hdr.bufferlen = 0;
@@ -664,13 +663,13 @@ int udp_server_func(struct iperf_data_t iperf_data)
 			total_size+=recv_size;
 			report_size+=recv_size;
 			if( (iperf_data.report_interval != DEFAULT_REPORT_INTERVAL) && ((end_time - report_start_time) >= (configTICK_RATE_HZ * iperf_data.report_interval))) {
-				printf("\n\r%s: Receive %d KBytes in %d ms, %d Kbits/sec",__func__,(uint32_t) (report_size/KB),(uint32_t)(end_time-report_start_time),(uint32_t) ((uint64_t)(report_size*8)/(end_time - report_start_time)));
+				printf("\n\r%s: Receive %d KBytes in %d ms, %d Kbits/sec",__func__,(uint32_t) (report_size/KB),(uint32_t)(end_time-report_start_time),((uint32_t)(report_size*8)/(end_time - report_start_time)));
 				report_start_time = end_time;
 				report_size = 0;
 			}
 		}
 	}
-	printf("\n\r%s: [END] Totally receive %d KBytes in %d ms, %d Kbits/sec",__func__,(uint32_t) (total_size/KB),(uint32_t)(end_time-start_time),(uint32_t) ((uint64_t)(total_size*8)/(end_time - start_time)));
+	printf("\n\r%s: [END] Totally receive %d KBytes in %d ms, %d Kbits/sec",__func__,(uint32_t) (total_size/KB),(uint32_t)(end_time-start_time),((uint32_t)(total_size*8)/(end_time - start_time)));
 
 Exit1:
 	// close the listening socket
@@ -859,11 +858,7 @@ void cmd_tcp(int argc, char **argv)
 					memset(&tcp_client_data,0,sizeof(struct iperf_data_t));
 					memset(&tcp_server_data,0,sizeof(struct iperf_data_t));
 					tcp_client_data.start = 1;
-					if (strlen(argv[2]) <= sizeof(tcp_client_data.server_ip) - 1) {
-						strcpy((char*)tcp_client_data.server_ip, argv[2]);
-					} else {
-						goto Exit;
-					}
+					strncpy((char*)tcp_client_data.server_ip, argv[2], (strlen(argv[2])>16)?16:strlen(argv[2]));
 					argv_count+=2;
 				}
 			}
@@ -1055,11 +1050,7 @@ void cmd_udp(int argc, char **argv)
 					memset(&udp_client_data,0,sizeof(struct iperf_data_t));
 					memset(&udp_server_data,0,sizeof(struct iperf_data_t));
 					udp_client_data.start = 1;
-					if (strlen(argv[2]) <= sizeof(udp_client_data.server_ip) - 1) {
-						strcpy((char*)udp_client_data.server_ip, argv[2]);
-					} else {
-						goto Exit;
-					}
+					strncpy((char*)udp_client_data.server_ip, argv[2], (strlen(argv[2])>16)?16:strlen(argv[2]));
 					argv_count+=2;
 				}
 			}
@@ -1131,7 +1122,6 @@ void cmd_udp(int argc, char **argv)
 				argv_count+=2;
 			}
 #if CONFIG_WLAN
-#if !(CONFIG_INIC_IPC)
 			else if(strcmp(argv[argv_count-1], "-S") == 0){ //for wmm test
 				if(argc < (argv_count+1))
 					goto Exit;
@@ -1148,7 +1138,6 @@ void cmd_udp(int argc, char **argv)
 					goto Exit;
 				argv_count+=2;
 			}
-#endif
 #endif			
 			else if(strcmp(argv[argv_count-1], "-t") == 0){
 				if(argc < (argv_count+1))

@@ -559,9 +559,9 @@ STATIC mp_obj_t wlan_connect(size_t n_args, const mp_obj_t *pos_args, mp_map_t *
         case RTW_SECURITY_WPA2_MIXED_PSK:
             wifi.security_type = RTW_SECURITY_WPA2_MIXED_PSK;
             break;
-        case RTW_SECURITY_WPA_WPA2_MIXED:
-            wifi.security_type = RTW_SECURITY_WPA_WPA2_MIXED;
-            break;
+//        case RTW_SECURITY_WPA_WPA2_MIXED:
+//            wifi.security_type = RTW_SECURITY_WPA_WPA2_MIXED;
+//            break;
         default:
             mp_raise_ValueError("This security type is not supported");
             break;
@@ -732,9 +732,9 @@ STATIC void wlan_print(const mp_print_t *print, mp_obj_t self_in, mp_print_kind_
         case RTW_SECURITY_WPA2_MIXED_PSK:
             security_qstr = MP_QSTR_WPA2_MIXED_PSK;
             break;
-        case RTW_SECURITY_WPA_WPA2_MIXED:
-            security_qstr = MP_QSTR_WPA_WPA2_MIXED;
-            break;
+//        case RTW_SECURITY_WPA_WPA2_MIXED:
+//            security_qstr = MP_QSTR_WPA_WPA2_MIXED;
+//            break;
     }
     mp_printf(print, "mode=%q", wlan_qstr);
     mp_printf(print, ", ssid=%s", ssid); 
