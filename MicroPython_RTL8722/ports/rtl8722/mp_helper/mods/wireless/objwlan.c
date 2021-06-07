@@ -260,11 +260,11 @@ STATIC mp_obj_t wlan_scan(mp_obj_t self_in) {
     uint8_t attempts = 10;
     uint8_t numOfNetworks = 0;
 
-    if(getConnectionStatus() != WL_NO_SHIELD) {
-
+    if(getConnectionStatus()) {
+        mp_hal_delay_ms(1000);
         if (startScanNetworks() == WL_FAILURE) {
-            printf("\n## WiFi scan network returned FAIL\n");
-            mp_raise_ValueError("Scan error!");
+            printf("\n## WiFi scan network returned FAIL \n\r");
+            mp_raise_ValueError("Scan errorrr!");
             return mp_const_none;
         }
 
@@ -272,12 +272,10 @@ STATIC mp_obj_t wlan_scan(mp_obj_t self_in) {
              mp_hal_delay_ms(2000);
              numOfNetworks = _networkCount;
         } while ((numOfNetworks == 0) && (--attempts > 0));
-
     } else {
-        printf("WiFi shield not present\n");
+        printf("WiFi not init \n\r");
         mp_raise_ValueError("Scan error!");
     }
-
 
     if (numOfNetworks == -1) { //if scan fail
         printf("Could not find available wifi\n");
@@ -296,7 +294,9 @@ STATIC mp_obj_t wlan_scan(mp_obj_t self_in) {
             printEncryptionType(_networkEncr[thisNet]);
         }
     }
-    
+
+    mp_hal_delay_ms(2000);
+
     return mp_const_none;
 }
 STATIC MP_DEFINE_CONST_FUN_OBJ_1(wlan_scan_obj, wlan_scan);
@@ -486,15 +486,15 @@ STATIC MP_DEFINE_CONST_FUN_OBJ_KW(wlan_start_ap_obj, 0, wlan_start_ap);
 
 
 STATIC mp_obj_t wlan_connect(size_t n_args, const mp_obj_t *pos_args, mp_map_t *kw_args) {
-    
+
     enum { ARG_ssid, ARG_pswd, ARG_security };
-    
+
     STATIC const mp_arg_t allowed_args[] = {
         { MP_QSTR_ssid,      MP_ARG_REQUIRED | MP_ARG_OBJ  ,{.u_obj = mp_const_none}},
         { MP_QSTR_pswd,      MP_ARG_OBJ                    ,{.u_obj = mp_const_none}},
         { MP_QSTR_security,  MP_ARG_INT                    ,{.u_int = RTW_SECURITY_WPA2_AES_PSK}}, // default WPA2
     };
-    
+
     //wlan_obj_t *self = pos_args[0];
 
     mp_arg_val_t args[MP_ARRAY_SIZE(allowed_args)];
@@ -559,15 +559,23 @@ STATIC mp_obj_t wlan_connect(size_t n_args, const mp_obj_t *pos_args, mp_map_t *
         case RTW_SECURITY_WPA2_MIXED_PSK:
             wifi.security_type = RTW_SECURITY_WPA2_MIXED_PSK;
             break;
-        case RTW_SECURITY_WPA_WPA2_MIXED:
-            wifi.security_type = RTW_SECURITY_WPA_WPA2_MIXED;
-            break;
+//        case RTW_SECURITY_WPA_WPA2_MIXED:
+//            wifi.security_type = RTW_SECURITY_WPA_WPA2_MIXED;
+//            break;
         default:
             mp_raise_ValueError("This security type is not supported");
             break;
     }
 
-    ret = wifi_connect((char*)wifi.ssid.val, wifi.security_type, (char*)wifi.password, wifi.ssid.len, wifi.password_len, wifi.key_id, NULL);
+    for (int i = 0; i < 4; i++) {
+        ret = wifi_connect((char*)wifi.ssid.val, wifi.security_type, (char*)wifi.password, wifi.ssid.len, wifi.password_len, wifi.key_id, NULL);
+        if (ret == RTW_SUCCESS) {
+            break;
+        } else {
+            printf("\n    Auto reconnect to WiFi...    \r\n");
+        }
+        mp_hal_delay_ms(2000);
+    }
 
     if (ret == RTW_SUCCESS) {
 
@@ -732,9 +740,9 @@ STATIC void wlan_print(const mp_print_t *print, mp_obj_t self_in, mp_print_kind_
         case RTW_SECURITY_WPA2_MIXED_PSK:
             security_qstr = MP_QSTR_WPA2_MIXED_PSK;
             break;
-        case RTW_SECURITY_WPA_WPA2_MIXED:
-            security_qstr = MP_QSTR_WPA_WPA2_MIXED;
-            break;
+//        case RTW_SECURITY_WPA_WPA2_MIXED:
+//            security_qstr = MP_QSTR_WPA_WPA2_MIXED;
+//            break;
     }
     mp_printf(print, "mode=%q", wlan_qstr);
     mp_printf(print, ", ssid=%s", ssid); 

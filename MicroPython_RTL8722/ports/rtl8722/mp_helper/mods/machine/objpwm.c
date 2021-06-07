@@ -44,7 +44,6 @@ STATIC void pwm_print(const mp_print_t *print, mp_obj_t self_in, mp_print_kind_t
     mp_printf(print, "PWM(%d, pin=%q)", self->unit, self->pin->name);
 }
 
-
 #if 0
 STATIC mp_obj_t pwm_period(mp_obj_t self_in, mp_obj_t msec_in) {
     pwm_obj_t *self = self_in;
@@ -54,14 +53,25 @@ STATIC mp_obj_t pwm_period(mp_obj_t self_in, mp_obj_t msec_in) {
 STATIC MP_DEFINE_CONST_FUN_OBJ_2(pwm_period_obj, pwm_period);
 #endif
 
-
+#if 0
 STATIC mp_obj_t pwm_write(mp_obj_t self_in, mp_float_t dutycycle) {
     pwm_obj_t *self = self_in;
     pwmout_write(&(self->obj), dutycycle);
     return mp_const_none;
 }
 STATIC MP_DEFINE_CONST_FUN_OBJ_2(pwm_write_obj, pwm_write);
-
+#else
+STATIC mp_obj_t pwm_write(size_t n_args, const mp_obj_t *args) {
+    pwm_obj_t *self = MP_OBJ_TO_PTR(args[0]);
+    if (n_args == 2) {
+        pwmout_write(&(self->obj), mp_obj_get_float(args[1]));
+    } else {
+        pwmout_write(&(self->obj), 0);
+    }
+    return mp_const_none;
+}
+STATIC MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(pwm_write_obj, 1, 2, pwm_write);
+#endif
 
 STATIC mp_obj_t pwm_make_new(const mp_obj_type_t *type, mp_uint_t n_args, mp_uint_t n_kw, const mp_obj_t *all_args) {
     enum { ARG_unit, ARG_pin};

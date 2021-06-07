@@ -19,7 +19,9 @@ u32 DiagPrintfD(const char *fmt, ...);
 int DiagVSprintf(char *buf, const char *fmt, const int *dp);
 
 //zzw arduino
+#if defined(ARDUINO_SDK)
 #define _DbgDump  DiagPrintf
+#endif
 
 /** @addtogroup Ameba_Platform
   * @{
@@ -63,6 +65,7 @@ typedef enum {
 	MODULE_BT			= 25,
 	MODULE_IPC			= 26,
 	MODULE_KM4		= 27,
+	MODULE_USB_CLASS  = 28,
 
 	MODULE_NUMs		= 32 /**< Module Number */
 } MODULE_DEFINE;

@@ -39,6 +39,7 @@ extern const struct _mp_obj_module_t mp_module_uos;
 extern const struct _mp_obj_module_t mp_module_utime;
 extern const struct _mp_obj_module_t mp_module_uwireless;
 extern const struct _mp_obj_module_t mp_module_usocket;
+extern const struct _mp_obj_module_t mp_module_sdfs;
 
 STATIC const mp_map_elem_t ameba_module_globals_table[] = {
     { MP_OBJ_NEW_QSTR(MP_QSTR___name__), 	MP_OBJ_NEW_QSTR(MP_QSTR_modules) },
@@ -46,7 +47,8 @@ STATIC const mp_map_elem_t ameba_module_globals_table[] = {
     { MP_OBJ_NEW_QSTR(MP_QSTR_os),          MP_OBJ_FROM_PTR(&mp_module_uos) },        
     { MP_OBJ_NEW_QSTR(MP_QSTR_time),        MP_OBJ_FROM_PTR(&mp_module_utime) },   
     { MP_OBJ_NEW_QSTR(MP_QSTR_wireless),    MP_OBJ_FROM_PTR(&mp_module_uwireless) },
-    { MP_OBJ_NEW_QSTR(MP_QSTR_socket),    MP_OBJ_FROM_PTR(&mp_module_usocket) },
+    { MP_OBJ_NEW_QSTR(MP_QSTR_socket),      MP_OBJ_FROM_PTR(&mp_module_usocket) },
+    { MP_OBJ_NEW_QSTR(MP_QSTR_sdfs),        MP_OBJ_FROM_PTR(&mp_module_sdfs) },
 };
 
 STATIC MP_DEFINE_CONST_DICT(ameba_module_globals, ameba_module_globals_table);

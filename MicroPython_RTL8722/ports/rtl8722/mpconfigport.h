@@ -94,15 +94,28 @@
 #define MICROPY_NLR_X64                         (0)
 
 #define MICROPY_READER_VFS                      (MICROPY_VFS)
-#define MICROPY_VFS                             (0)
+#define MICROPY_VFS                             (1)
 #define MICROPY_VFS_FAT                         (0)
 #define MICROPY_READER_FATFS                    (MICROPY_VFS)
-#define MICROPY_FATFS_ENABLE_LFN                (0)
+#define MICROPY_FATFS_ENABLE_LFN                (1)
 #define MICROPY_FATFS_LFN_CODE_PAGE             (437) /* 1=SFN/ANSI 437=LFN/U.S.(OEM) */
-#define MICROPY_FATFS_VOLUMES                   (4)
+#define MICROPY_FATFS_VOLUMES                   (1)
 #define MICROPY_FATFS_RPATH                     (2)
-#define MICROPY_FATFS_MAX_SS                    (4096)
+#define MICROPY_FATFS_MAX_SS                    (512)
 #define MICROPY_FATFS_USE_LABEL                 (1)
+
+/*
+// File System
+#define CONFIG_FATFS_EN 1
+#if CONFIG_FATFS_EN
+// fatfs version
+#define FATFS_R_10C
+// fatfs disk interface
+#define FATFS_DISK_USB  0
+#define FATFS_DISK_SD   1
+#define FATFS_DISK_FLASH    0
+#endif
+*/
 
 #include "rtl8721d.h"
 
@@ -129,6 +142,7 @@ extern const struct _mp_obj_module_t mp_module_uos;
 extern const struct _mp_obj_module_t mp_module_utime;
 extern const struct _mp_obj_module_t mp_module_uwireless;
 extern const struct _mp_obj_module_t mp_module_usocket;
+extern const struct _mp_obj_module_t mp_module_sdfs;
 #if 0
 extern const struct _mp_obj_module_t mp_module_uterminal;
 extern const struct _mp_obj_module_t mp_module_ussl;
@@ -143,6 +157,7 @@ extern const struct _mp_obj_module_t mp_network_module;
     { MP_OBJ_NEW_QSTR(MP_QSTR_utime),        MP_OBJ_FROM_PTR(&mp_module_utime) },      \
     { MP_OBJ_NEW_QSTR(MP_QSTR_uwireless),    MP_OBJ_FROM_PTR(&mp_module_uwireless) },  \
     { MP_OBJ_NEW_QSTR(MP_QSTR_usocket),      MP_OBJ_FROM_PTR(&mp_module_usocket) },    \
+    { MP_OBJ_NEW_QSTR(MP_QSTR_sdfs),         MP_OBJ_FROM_PTR(&mp_module_sdfs) },         \
 /*    { MP_OBJ_NEW_QSTR(MP_QSTR_ussl),         MP_OBJ_FROM_PTR(&mp_module_ussl) },    \
     { MP_OBJ_NEW_QSTR(MP_QSTR_network),      MP_OBJ_FROM_PTR(&mp_network_module) },    \
     { MP_OBJ_NEW_QSTR(MP_QSTR_uterminal),    MP_OBJ_FROM_PTR(&mp_module_uterminal) },   \
@@ -162,7 +177,7 @@ extern const struct _mp_obj_module_t mp_network_module;
 
 #define MICROPY_PY_SYS_PLATFORM             "Realtek Ameba"
 
-#define MICROPY_HW_PORT_VERSION             "1.0.0"
+#define MICROPY_HW_PORT_VERSION             "1.0.1"
 
 #define MICROPY_HW_BOARD_NAME               MICROPY_PY_SYS_PLATFORM
 #define MICROPY_HW_MCU_NAME                 "RTL8722"
