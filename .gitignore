@@ -41,3 +41,10 @@ genrst/
 cscope.*
 build_info.h
 .vscode
+
+# Ignore unzipped tools and toolchaind
+
+MicroPython_RTL8722/ports/rtl8722/amebad_tool/toolchain/cygwin
+MicroPython_RTL8722/ports/rtl8722/amebad_tool/toolchain/linux
+MicroPython_RTL8722/ports/rtl8722/amebad_tool/tools/windows
+MicroPython_RTL8722/ports/rtl8722/amebad_tool/tools/linux

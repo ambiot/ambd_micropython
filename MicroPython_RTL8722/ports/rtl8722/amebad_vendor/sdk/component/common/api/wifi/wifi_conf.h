@@ -31,7 +31,7 @@
  *  @brief      NIC functions
  *  @{
  */
-#include "basic_types.h"
+
 #include "wifi_constants.h"
 #include "wifi_structures.h"
 #include "wifi_util.h"
@@ -293,6 +293,11 @@ int wifi_disable_powersave(void);
  * @return  RTW_SUCCESS : if successful
  *          RTW_ERROR   : if not successful
  */
+
+void wifi_btcoex_set_bt_on(void);
+
+void wifi_btcoex_set_bt_off(void);
+
 int wifi_get_txpower(int *poweridx);
 
 /**
@@ -355,12 +360,12 @@ int wifi_get_sta_max_data_rate(__u8 * inidata_rate);
 int wifi_get_rssi(int *pRSSI);
 
 /**
-  * @brief	Retrieve the latest SNR value.
-  * @param[out]  pRSSI: Points to the integer to store the SNR value gotten from driver.
-  * @return  RTW_SUCCESS: If the SNR is succesfully retrieved.
-  * @return  RTW_ERROR: If the SNR is not retrieved.
-  */
- int wifi_get_snr(int *pSNR);
+ * @brief  Retrieve the latest average beacon RSSI value.
+ * @param[out]  pRSSI: Points to the integer to store the RSSI value gotten from driver.
+ * @return  RTW_SUCCESS: If the RSSI is succesfully retrieved.
+ * @return  RTW_ERROR: If the RSSI is not retrieved.
+ */
+int wifi_get_bcn_rssi(int *pRSSI);
 
 /**
  * @brief  Set the listening channel for promiscuous mode.
@@ -560,6 +565,16 @@ int wifi_set_lps_thresh(rtw_lps_thresh_t mode);
  */
 int wifi_set_lps_level(unsigned char lps_level);
 
+#ifdef LONG_PERIOD_TICKLESS
+/**
+ * @brief Set Smart PS
+ * @param[in] smartps: 0 is issue NULL data, 2 is issue PS-Poll
+ *
+ * @return  RTW_SUCCESS if setting Smart PS successful.
+ * @return  RTW_ERROR otherwise
+ */
+int wifi_set_lps_smartps(unsigned char smartps);
+#endif
 /**
  * @brief  Set Management Frame Protection Support.
  * @param[in] value: 
@@ -701,6 +716,20 @@ int wifi_scan_networks_mcc(rtw_scan_result_handler_t results_handler, void* user
  *			Those variables must remain valid until the scan is completed.
  */
 int wifi_scan_networks_with_ssid(int (results_handler)(char*, int, char *, void *), void* user_data, int scan_buflen, char* ssid, int ssid_len);
+
+/**
+ * @brief  Initiate a scan to search for 802.11 networks with specified SSID.
+ * @param[in]  results_handler: The callback function which will receive and process the result data.
+ * @param[in]  user_data: User specified data that will be passed directly to the callback function.
+ * @param[in]  scan_buflen: The length of the result storage structure.
+ * @param[in]  ssid: The SSID of target network.
+ * @param[in]  ssid_len: The length of the target network SSID.
+ * @return  RTW_SUCCESS or RTW_ERROR
+ * @note  Callback must not use blocking functions, since it is called from the context of the RTW thread. 
+ *			The callback, user_data variables will be referenced after the function returns. 
+ *			Those variables must remain valid until the scan is completed.
+ */
+int wifi_scan_networks_with_ssid_by_extended_security(int (results_handler)(char*, int, char *, void *), void* user_data, int scan_buflen, char* ssid, int ssid_len);
 
 /**
 * @brief  Set the channel used to be partial scanned.
@@ -969,18 +998,6 @@ int wifi_disable_packet_filter(unsigned char filter_id);
 int wifi_remove_packet_filter(unsigned char filter_id);
 
 /**
-  * @brief: Filter out the retransmission MIMO packet in promisc mode.
-  * @param[in]  enable: set 1 to enable filter retransmission pkt function, set 0 to disable this filter function.
-  * @param[in]  filter_interval_ms: if 'enable' equals 0, it's useless; if 'enable' equals 1, this value 
-  *				indicate the time(ms) below which an adjacent pkt received will be claimed a retransmission pkt
-  *				if it has the same length with the previous pkt, and driver will drop all retransmission pkts.
-  *				For example, if the packet transmission time interval is 10ms, but driver receives two packets with
-  *				the same length within 3ms then the second packet will be dropped if configed as wifi_retransmit_packet_filter(1,3).
-  * @return 0 if success, otherwise return -1.
-  */
-int wifi_retransmit_packet_filter(u8 enable, u8 filter_interval_ms);
-
-/**
   * @brief: Only receive the packets sent by the specified ap and phone in promisc mode.
   * @param[in]  enable: set 1 to enable filter, set 0 to disable this filter function.
   * @param[in]  ap_mac: if 'enable' equals 0, it's useless; if 'enable' equals 1, this value is the ap's mac address.
@@ -989,15 +1006,6 @@ int wifi_retransmit_packet_filter(u8 enable, u8 filter_interval_ms);
   * @note  Please invoke this function as "wifi_filter_by_ap_and_phone_mac(0,NULL,NULL)" before exiting promisc mode if you enabled it during the promisc mode.
   */
 void wifi_filter_by_ap_and_phone_mac(u8 enable, void *ap_mac, void *phone_mac);
-
-/**
-  * @brief:	config to report ctrl packet or not under promisc mode.
-  * @param[in]	enable: set 1 to enable ctrl packet report, set 0 to disable ctrl packet report.
-  * 
-  * @return	0 if success, otherwise return -1.
-  * @note this function can only be used under promisc mode, i.e. between wifi_set_promisc(enable,...,...) and wifi_set_promisc(disable,...,...)
-  */
-int wifi_promisc_ctrl_packet_rpt(u8 enable);
 #endif
 
 /**
@@ -1135,6 +1143,19 @@ extern u32 rtw_get_tsf(u32 Port);
 WL_BAND_TYPE wifi_get_band_type(void);
 
 
+#ifdef LOW_POWER_WIFI_CONNECT
+int wifi_set_psk_eap_interval(uint16_t psk_interval, uint16_t eap_interval);
+int wifi_set_null1_param(uint8_t check_period, uint8_t pkt_num, uint8_t limit, uint8_t interval);
+#endif
+
+/**
+ * @brief  Switch channel of softap and inform connected stations to keep wifi connection.
+ * @param[in]  new_channel: The channel number that softap will switch to.
+ * @return  RTW_SUCCESS: If switching channel is successful.
+ * @return  RTW_ERROR: If switching channel is failed.
+ */
+int wifi_ap_switch_chl_and_inform(unsigned char new_channel);
+
 #ifdef __cplusplus
   }
 #endif
@@ -1142,3 +1163,4 @@ WL_BAND_TYPE wifi_get_band_type(void);
 /*\@}*/
 
 #endif // __WIFI_API_H
+

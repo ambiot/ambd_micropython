@@ -4,6 +4,16 @@
 #                                                  #
 ####################################################
 
+
+#RTL8722 MicroPython SDK release V1.0.1  11/03/2021
+- Added firmware upload tool and script for Linux and MacOS
+- Update WLAN library and apply security patch
+- Update readme documentation
+- Implemented SD Card File System helper modules:
+    - sdfs
+- Provide examples for sdfs module
+
+
 #RTL8722 MicroPython SDK release V1.0.0  12/11/2020
 - Added help function and help message
 - Update Ameba SDK and toolchain
@@ -13,17 +23,6 @@
     - WiFi
     - Socket
 - Provide examples for all peripheral and network module
-
-
-#RTL8722 MicroPython SDK release V1.0.0  12/11/2020
-- Added help function and help message
-- Update Ameba SDK and toolchain
-- Update readme documentation
-- Fix bugs found in alpha release
-- Implemented network helper modules:
-    - WiFi
-    - Socket
-- Provide examples for all peripheral and network modules
 
 
 #RTL8722 MicroPython SDK release V0.0.1(Alpha)  29/09/2020

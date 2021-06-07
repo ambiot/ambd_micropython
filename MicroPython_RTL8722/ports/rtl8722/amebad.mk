@@ -46,6 +46,7 @@ INC += -I$(VENDOR)/component/common/utilities
 INC += -I$(VENDOR)/component/common/video/v4l2/inc
 INC += -I$(VENDOR)/component/common/media/rtp_codec
 INC += -I$(VENDOR)/component/common/file_system/fatfs
+INC += -I$(VENDOR)/component/common/file_system/fatfs/disk_if/inc
 INC += -I$(VENDOR)/component/common/file_system/fatfs/r0.10c/include
 INC += -I$(VENDOR)/component/common/file_system/ftl
 INC += -I$(VENDOR)/component/common/drivers/sdio/realtek/sdio_host/inc
@@ -82,7 +83,7 @@ INC += -I$(TOP)/lib/utils
 INC += -I$(TOP)/lib/timeutils
 INC += -I$(TOP)/lib/mp-readline
 INC += -I$(TOP)/lib/netutils
-INC += -I$(TOP)/lib/oofatfs
+#INC += -I$(TOP)/lib/oofatfs
 #INC += -I$(TOP)/lib/lwip/src/include/lwip
 
 INC += -Imp_helper
@@ -129,9 +130,17 @@ UPY_C += lib/utils/interrupt_char.c
 UPY_C += lib/timeutils/timeutils.c
 UPY_C += lib//utils/sys_stdio_mphal.c
 UPY_C += lib/netutils/netutils.c 
+
+# File System
 #UPY_C += lib/oofatfs/ff.c 
-#UPY_C += lib/oofatfs/ffunicode.c 
-#UPY_C += lib/oofatfs/option/ccsbcs.c 
+UPY_C += $(VENDOR)/component/common/file_system/fatfs/fatfs_ext/src/ff_driver.c
+UPY_C += $(VENDOR)/component/common/file_system/fatfs/r0.10c/src/diskio.c
+UPY_C += $(VENDOR)/component/common/file_system/fatfs/r0.10c/src/ff.c
+UPY_C += $(VENDOR)/component/common/file_system/fatfs/disk_if/src/flash_fatfs.c
+UPY_C += $(VENDOR)/component/common/file_system/fatfs/disk_if/src/sdcard.c
+UPY_C += mp_helper/mods/modsdfs.c
+
+# main
 UPY_C += main.c
 
 
@@ -190,7 +199,7 @@ LIBFLAGS = -Wl,--no-enum-size-warning -Wl,--warn-common
 LIBAR += -Wl,--start-group
 LIBAR += -L$(VENDOR)/../ARCHIVE_LIB/ -l_arduino -l_wlan -l_wps -l_wifi_ucps_fw 
 LIBAR += -l_wifi_fw -l_websocket -l_user -l_usbh -l_usbd -l_tftp -l_mdns -l_m4a_self 
-LIBAR += -l_httpd -l_httpc -l_eap -l_dct -l_coap -l_cmsis_dsp -l_bt -l_mbedtls240 
+LIBAR += -l_httpd -l_httpc -l_eap -l_dct -l_coap -l_cmsis_dsp -l_arduino_bt -l_arduino_mbedtls240
 LIBAR += -Wl,--end-group
 
 
@@ -270,12 +279,16 @@ cleanpwd:
 
 .PHONY: com
 com:
-	picocom -b115200 $(UPLOAD_PATH)
+	@if [ $(findstring CYGWIN, $(OS)) = CYGWIN ]; \
+		then ttermpro /C=8 /BAUD=115200; \
+		else picocom -b115200 $(UPLOAD_PATH); fi
 
 
 .PHONY: release
 release:
-	cp -f $(BUILD)/km0_km4_image2.bin $(TOP)/../Release
+	cp -f $(BUILD)/km0_km4_image2.bin $(TOP)/../Release/Windows
+	cp -f $(BUILD)/km0_km4_image2.bin $(TOP)/../Release/Linux
+	cp -f $(BUILD)/km0_km4_image2.bin $(TOP)/../Release/MacOS
 
 
 ######################

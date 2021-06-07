@@ -51,9 +51,15 @@ struct http_response {
 	size_t version_len;              /*!< HTTP version data length */
 	uint8_t *status;                 /*!< Pointer to HTTP status code in the parsed HTTP header string */
 	size_t status_len;               /*!< HTTP status code data length */
+	uint8_t *location;               /*!< Pointer to HTTP location in the parsed HTTP header string */
+	size_t location_len;             /*!< HTTP location data length */
 	uint8_t *content_type;           /*!< Pointer to Content-Type header field in the parsed HTTP header string */
 	size_t content_type_len;         /*!< Content-Type header field data length */
 	size_t content_len;              /*!< Value of Content-Length header field parsed in HTTP header string */
+	uint8_t *trans_enc;              /*!< Pointer to Transfer-Encoding header field in the parsed HTTP header string */
+	size_t trans_enc_len;            /*!< Transfer-Encoding header field data length */
+    size_t trans_chunk_len;         /*!< Chuncked current transfer length remain, default value: 0xFFFFFFFF*/
+
 };
 
 /**

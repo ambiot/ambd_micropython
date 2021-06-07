@@ -561,3 +561,39 @@ def http_get(url):
 
 http_get('http://micropython.org/ks/test.html')
 ```
+
+## 6.SD Card File System
+SD File System is supported on MicroPython RTL8722 port through importing the ```sdfs``` module. This module is a simplified file system with the aim to highlight SD card manipulation, thus it doesn't support virtual file system as well as virtual file object.
+
+Note: No hardware connection is needed for RTL8722DM_mini dev. board as it comes with SD Card slot on the back of the development board, and hardware connection has been pre-configured.
+
+Simply import ```sdfs``` to use all available APIs
+
+### SD Card File System Examples
+Use API provided to freely navigate through the SD card and read/write files as you see fit
+
+#### Listing and navigating through the file system
+```Python
+import sdfs
+
+s=sdfs            # create a short form
+s.listdir()       # listing the files and folders under current path
+s.mkdir("test")   # create a folder named "test" under current path
+s.chdir("test")   # change directory to test folder
+s.pwd()           # print out present working directory(current path)
+s.chdir("/")      # change directory bach to root directory
+s.rm("test")      # delete the test folder
+```
+
+#### File Manipulation
+```Python
+import sdfs
+
+s=sdfs                  # create a short form
+s.create("ameba.txt")   # create a file named "ameba.txt"
+s.write("ameba.txt", "ameba supports sd card file system!") # write a string to the file just created
+s.read("ameba.txt")     # read the content from the same file
+s.rm("ameba.txt")       # delete the file
+```
+
+Note: No file open or close is needed, the API does that automatically for you.

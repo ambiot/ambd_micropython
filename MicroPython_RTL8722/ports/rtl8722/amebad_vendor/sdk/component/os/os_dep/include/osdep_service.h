@@ -32,7 +32,7 @@ extern "C" {
 
 #define CONFIG_LITTLE_ENDIAN
 
-#if defined(CONFIG_PLATFORM_8195A) || defined(CONFIG_PLATFORM_8711B) || defined(CONFIG_PLATFORM_8721D) || defined(CONFIG_PLATFORM_8195BHP) || defined(CONFIG_PLATFORM_8710C)|| (defined CONFIG_PLATFORM_AMEBAD2)
+#if defined(CONFIG_PLATFORM_8195A) || defined(CONFIG_PLATFORM_8711B) || defined(CONFIG_PLATFORM_8721D) || defined(CONFIG_PLATFORM_8195BHP) || defined(CONFIG_PLATFORM_8710C)
 #define CONFIG_PLATFORM_AMEBA_X 1
 #endif
 
@@ -1017,7 +1017,6 @@ void rtw_wakeup_task(struct task_struct *task);
 void rtw_set_priority_task(void* task, u32 NewPriority );
 
 int rtw_get_priority_task(void* task);
-
 void rtw_suspend_task (void* task);
 
 void rtw_resume_task (void* task);

@@ -28,8 +28,11 @@
 #define MAX_IMG_NUM		2
 
 #define HTTP_OTA_UPDATE	
-#define HTTPS_OTA_UPDATE
+#define HTTPS_OTA_UPDATE	
 #define SDCARD_OTA_UPDATE
+
+#define RSIP_OTA_UPDATE 0
+
 
 #if (defined HTTP_OTA_UPDATE) || (defined HTTPS_OTA_UPDATE)
 
