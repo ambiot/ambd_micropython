@@ -56,6 +56,30 @@
 /*****************************************************************************
  *                              Internal variables
  * ***************************************************************************/
+/*
+ * //app_mbedtls_rom_init 
+ */
+static void* app_mbedtls_calloc_func(size_t nelements, size_t elementSize)
+{
+    size_t size;
+    void *ptr = NULL;
+
+    size = nelements * elementSize;
+    ptr = pvPortMalloc(size);
+
+    if (ptr) {
+        _memset(ptr, 0, size);
+    }
+
+    return ptr;
+}
+
+void app_mbedtls_rom_init(void)
+{
+    mbedtls_platform_set_calloc_free(app_mbedtls_calloc_func, vPortFree);
+    //rom_ssl_ram_map.use_hw_crypto_func = 1;
+    rtl_cryptoEngine_init();
+}
 
 /*****************************************************************************
  *                              External variables
@@ -123,6 +147,11 @@ goto soft_reset;
 
 
 int main (void) {
+
+#ifdef CONFIG_MBED_TLS_ENABLED
+    app_mbedtls_rom_init();
+#endif
+
 /*
     struct task_struct stUpyTask;
     BaseType_t xReturn = rtw_create_task(&stUpyTask, MICROPY_TASK_NAME,

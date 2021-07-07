@@ -486,15 +486,15 @@ STATIC MP_DEFINE_CONST_FUN_OBJ_KW(wlan_start_ap_obj, 0, wlan_start_ap);
 
 
 STATIC mp_obj_t wlan_connect(size_t n_args, const mp_obj_t *pos_args, mp_map_t *kw_args) {
-    
+
     enum { ARG_ssid, ARG_pswd, ARG_security };
-    
+
     STATIC const mp_arg_t allowed_args[] = {
         { MP_QSTR_ssid,      MP_ARG_REQUIRED | MP_ARG_OBJ  ,{.u_obj = mp_const_none}},
         { MP_QSTR_pswd,      MP_ARG_OBJ                    ,{.u_obj = mp_const_none}},
         { MP_QSTR_security,  MP_ARG_INT                    ,{.u_int = RTW_SECURITY_WPA2_AES_PSK}}, // default WPA2
     };
-    
+
     //wlan_obj_t *self = pos_args[0];
 
     mp_arg_val_t args[MP_ARRAY_SIZE(allowed_args)];
@@ -567,7 +567,15 @@ STATIC mp_obj_t wlan_connect(size_t n_args, const mp_obj_t *pos_args, mp_map_t *
             break;
     }
 
-    ret = wifi_connect((char*)wifi.ssid.val, wifi.security_type, (char*)wifi.password, wifi.ssid.len, wifi.password_len, wifi.key_id, NULL);
+    for (int i = 0; i < 4; i++) {
+        ret = wifi_connect((char*)wifi.ssid.val, wifi.security_type, (char*)wifi.password, wifi.ssid.len, wifi.password_len, wifi.key_id, NULL);
+        if (ret == RTW_SUCCESS) {
+            break;
+        } else {
+            printf("\n    Auto reconnect to WiFi...    \r\n");
+        }
+        mp_hal_delay_ms(2000);
+    }
 
     if (ret == RTW_SUCCESS) {
 
