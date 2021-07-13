@@ -567,14 +567,18 @@ STATIC mp_obj_t wlan_connect(size_t n_args, const mp_obj_t *pos_args, mp_map_t *
             break;
     }
 
-    for (int i = 0; i < 4; i++) {
+    for (int i = 1; i < 6; i++) {
+        //printf("\n    Before wifi_connect    \r\n");
         ret = wifi_connect((char*)wifi.ssid.val, wifi.security_type, (char*)wifi.password, wifi.ssid.len, wifi.password_len, wifi.key_id, NULL);
+        //printf("\n    After  wifi_connect    \r\n");
         if (ret == RTW_SUCCESS) {
             break;
         } else {
             printf("\n    Auto reconnect to WiFi...    \r\n");
         }
-        mp_hal_delay_ms(2000);
+        //mp_hal_delay_ms(10000);
+        vTaskDelay(10000);
+        //printf("\n    After vTaskDelay 10s    \r\n");
     }
 
     if (ret == RTW_SUCCESS) {
