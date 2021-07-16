@@ -6,7 +6,6 @@ OS := $(shell uname)
 all:
 ifeq ($(findstring CYGWIN, $(OS)), CYGWIN)
 	mkdir -p cygwin
-###	tar -jxvf ameba_d_toolchain_windows-1.0.1.tar.bz2 -C cygwin/
 	tar -jxvf ameba_d_toolchain_cygwin-1.0.0-p1.tar.bz2 -C cygwin/
 	tar -jxvf ameba_d_toolchain_cygwin-1.0.0-p2.tar.bz2 -C cygwin/
 else
