@@ -1,11 +1,14 @@
 ####################################################
 #                                                  #
-#  MicroPython Ameba RTL8722 Port Release History  #
+#  MicroPython SDK RTL8722DM Release History       #
 #                                                  #
 ####################################################
+#MicroPython SDK release V1.0.1 with WLAN patch  15/07/2021
+- Update Wlan API for loop 5 times when connecting
+- Update Wlan lib, support WPA3
 
 
-#RTL8722 MicroPython SDK release V1.0.1  11/03/2021
+#MicroPython SDK release V1.0.1  11/03/2021
 - Added firmware upload tool and script for Linux and MacOS
 - Update WLAN library and apply security patch
 - Update readme documentation
@@ -14,7 +17,16 @@
 - Provide examples for sdfs module
 
 
-#RTL8722 MicroPython SDK release V1.0.0  12/11/2020
+#MicroPython SDK release V1.0.1  11/03/2021
+- Added firmware upload tool and script for Linux and MacOS
+- Update WLAN library and apply security patch
+- Update readme documentation
+- Implemented SD Card File System helper modules:
+    - sdfs
+- Provide examples for sdfs module
+
+
+#MicroPython SDK release V1.0.0  12/11/2020
 - Added help function and help message
 - Update Ameba SDK and toolchain
 - Update readme documentation
@@ -25,7 +37,7 @@
 - Provide examples for all peripheral and network module
 
 
-#RTL8722 MicroPython SDK release V0.0.1(Alpha)  29/09/2020
+#MicroPython SDK release V0.0.1(Alpha)  29/09/2020
 - Ported basic MicroPython functions 
 - Implemented REPL and basic terminal functions
 - Added Pin Mapping for RTL8722
