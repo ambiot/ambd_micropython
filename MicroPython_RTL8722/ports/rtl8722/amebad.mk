@@ -138,7 +138,7 @@ UPY_C += $(VENDOR)/component/common/file_system/fatfs/r0.10c/src/diskio.c
 UPY_C += $(VENDOR)/component/common/file_system/fatfs/r0.10c/src/ff.c
 UPY_C += $(VENDOR)/component/common/file_system/fatfs/disk_if/src/flash_fatfs.c
 UPY_C += $(VENDOR)/component/common/file_system/fatfs/disk_if/src/sdcard.c
-UPY_C += mp_helper/mods/modsdfs.c
+UPY_C += mp_helper/mods/machine/objsdfs.c
 
 # main
 UPY_C += main.c
