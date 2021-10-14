@@ -13,7 +13,7 @@ DEBUG := 1
 VENDOR := amebad_vendor/sdk
 TOOL := amebad_tool/tools
 
-$(info ## This build only supports Cygwin and Linux!)
+#$(info ## This build only supports Cygwin and Linux!)
 #$(info ## Now building for: $(CHIP))
 
 

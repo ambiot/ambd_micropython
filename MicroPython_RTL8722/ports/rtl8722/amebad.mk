@@ -302,6 +302,7 @@ $(UPY_O): $(BUILD)/%.o : %.c
 ##############
 $(POSTBUILD):
 	$(Q)cp -f $(POSTBUILDTOOL_PATH)/$(POSTBUILD) $(BUILD)/$(POSTBUILD)
+	$(Q)rm -f ./*.d
 
 $(IMAGETOOL):
 	$(Q)cp -f $(POSTBUILDTOOL_PATH)/$(IMAGETOOL) $(BUILD)/$(IMAGETOOL)
