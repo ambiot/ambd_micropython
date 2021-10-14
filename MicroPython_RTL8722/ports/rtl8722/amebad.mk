@@ -197,8 +197,7 @@ LIBFLAGS = -Wl,--no-enum-size-warning -Wl,--warn-common
 #         ARCHIVE LIST        #
 ###############################
 LIBAR += -Wl,--start-group
-LIBAR += -L$(VENDOR)/../ARCHIVE_LIB/ -l_arduino -l_wlan -l_wps -l_wifi_ucps_fw 
-LIBAR += -l_wifi_fw -l_websocket -l_user -l_usbh -l_usbd -l_tftp -l_mdns -l_m4a_self 
+LIBAR += -L$(VENDOR)/../ARCHIVE_LIB/ -l_micropython -l_wlan -l_wps -l_websocket -l_user -l_usbh -l_usbd -l_tftp -l_mdns -l_m4a_self 
 LIBAR += -l_httpd -l_httpc -l_eap -l_dct -l_coap -l_cmsis_dsp -l_arduino_bt -l_arduino_mbedtls240
 LIBAR += -Wl,--end-group
 
@@ -303,6 +302,7 @@ $(UPY_O): $(BUILD)/%.o : %.c
 ##############
 $(POSTBUILD):
 	$(Q)cp -f $(POSTBUILDTOOL_PATH)/$(POSTBUILD) $(BUILD)/$(POSTBUILD)
+	$(Q)rm -f ./*.d
 
 $(IMAGETOOL):
 	$(Q)cp -f $(POSTBUILDTOOL_PATH)/$(IMAGETOOL) $(BUILD)/$(IMAGETOOL)

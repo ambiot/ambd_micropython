@@ -177,7 +177,7 @@ extern const struct _mp_obj_module_t mp_network_module;
 
 #define MICROPY_PY_SYS_PLATFORM             "Realtek Ameba"
 
-#define MICROPY_HW_PORT_VERSION             "1.0.1"
+#define MICROPY_HW_PORT_VERSION             "1.0.2"
 
 #define MICROPY_HW_BOARD_NAME               MICROPY_PY_SYS_PLATFORM
 #define MICROPY_HW_MCU_NAME                 "RTL8722"
