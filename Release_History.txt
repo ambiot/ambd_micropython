@@ -3,6 +3,14 @@
 #  MicroPython SDK RTL8722DM Release History       #
 #                                                  #
 ####################################################
+#MicroPython SDK release V1.0.2  14/10/2021
+- Add MacOS toolchain to support building on MacOS
+- Update WLAN and other libraries
+- Update readme documentation
+- Update PWM module with new API
+- Re-structure SDFS module and remove warning when no SD card
+
+
 #MicroPython SDK release V1.0.1 with WLAN patch  15/07/2021
 - Update Wlan API for loop 5 times when connecting
 - Update Wlan lib, support WPA3
