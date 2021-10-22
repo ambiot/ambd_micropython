@@ -392,6 +392,18 @@ Note: both unit support master mode, but ```only unit 0``` support slave mode
 Use help(SPI) to view more information about this class
 
 
+### FLASH
+Use the ```FLASH``` (External FLASH 2MB) module through ```machine``` module
+
+```Python
+from machine import FLASH
+f=FLASH() #create a FLASH object
+f.read(5, 1048576) #read 5 bytes from the specific address (1048576 = 0X100000)
+f.write("Hello", 1048576) #write buffer content to the specific address
+f.update("Hey", 1048576) #erase the existing content and write new content to the specific address
+f.read(5, 1048576)
+```
+
 ## 5. Netoworking
 RTL8722 MicroPython port support WiFi connection through ```WLAN``` module.
 
