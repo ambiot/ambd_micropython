@@ -32,11 +32,20 @@ static uint8_t id = 0; // default SPI idx id is 0
 
 spi_t mp_spi_obj[SPI_MAX];  // MBED obj 
 
+#if defined(RTL8722DM)
 STATIC spi_obj_t spi_obj[2] = {
     {.base.type = &spi_type, .unit = 0, .bits = 8, .baudrate = SPI_DEFAULT_BAUD_RATE, .pol = SCPOL_INACTIVE_IS_LOW, .pha = SCPH_TOGGLES_IN_MIDDLE },
     {.base.type = &spi_type, .unit = 1, .bits = 8, .baudrate = SPI_DEFAULT_BAUD_RATE, .pol = SCPOL_INACTIVE_IS_LOW, .pha = SCPH_TOGGLES_IN_MIDDLE },
 };
 
+#elif defined(RTL8722DM_MINI)
+STATIC spi_obj_t spi_obj[1] = {
+    {.base.type = &spi_type, .unit = 0, .bits = 8, .baudrate = SPI_DEFAULT_BAUD_RATE, .pol = SCPOL_INACTIVE_IS_LOW, .pha = SCPH_TOGGLES_IN_MIDDLE },
+    {.base.type = &spi_type, .unit = 1, .bits = 8, .baudrate = SPI_DEFAULT_BAUD_RATE, .pol = SCPOL_INACTIVE_IS_LOW, .pha = SCPH_TOGGLES_IN_MIDDLE },
+};
+#else
+#error "Please specify the correct board name before re-try"
+#endif 
 
 STATIC void spi_print(const mp_print_t *print, mp_obj_t self_in, mp_print_kind_t kind) {
     spi_obj_t *self = self_in;
