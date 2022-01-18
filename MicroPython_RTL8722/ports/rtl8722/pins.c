@@ -158,6 +158,14 @@ const PinMap PinMap_I2C_SCL[] = {
     {NC,    NC,     0}
 };
 
+
+typedef enum {
+    PWM_6 = 7,
+    PWM_7,
+    PWM_8,
+    PWM_9
+} PWMName_MP;
+
 const PinMap PinMap_PWM[] = {
     AF(PB_4, PWM, _0, PullNone),
     AF(PB_5, PWM, _1, PullNone),
@@ -165,11 +173,9 @@ const PinMap PinMap_PWM[] = {
     AF(PA_12,  PWM, _3, PullNone),
     AF(PA_13, PWM, _4, PullNone),
     AF(PA_23,  PWM, _5, PullNone),
-    /*
     AF(PA_24, PWM, _6, PullNone),
     AF(PA_28,  PWM, _7, PullNone),
     AF(PA_30, PWM, _8, PullNone),
-    */
     {NC,    NC,     0}
 };
 

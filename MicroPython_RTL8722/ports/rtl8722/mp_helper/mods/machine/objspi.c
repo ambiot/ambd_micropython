@@ -30,6 +30,11 @@
 #define SPI_MAX 2       //max 2 sets of SPI supported on Ameba D
 static uint8_t id = 0; // default SPI idx id is 0 
 
+
+#define STRINGIFY(x) #x
+#define TOSTRING(x) STRINGIFY(x)
+
+
 spi_t mp_spi_obj[SPI_MAX];  // MBED obj 
 
 #if defined(RTL8722DM)
@@ -50,11 +55,11 @@ STATIC spi_obj_t spi_obj[1] = {
 STATIC void spi_print(const mp_print_t *print, mp_obj_t self_in, mp_print_kind_t kind) {
     spi_obj_t *self = self_in;
     if (id == 0) {
-        mp_printf(print, "SPI(%d, baudrate=%u, bits=%d, MOSI=PB_18, MISO=PB_19, SCLK=PB_20, CS=PB_21 )", 
-            self->unit, self->baudrate, self->bits);
+        mp_printf(print, "SPI(%d, baudrate=%u, bits=%d, MOSI=%s, MISO=%s, SCLK=%s, CS=%s )", 
+            self->unit, self->baudrate, self->bits, TOSTRING(SPI_0_MOSI), TOSTRING(SPI_0_MISO), TOSTRING(SPI_0_SCLK), TOSTRING(SPI_0_CS));
     } else {
-        mp_printf(print, "SPI(%d, baudrate=%u, bits=%d, MOSI=PB_4, MISO=PB_5, SCLK=PB_6, CS=PB_7 )", 
-            self->unit, self->baudrate, self->bits);
+        mp_printf(print, "SPI(%d, baudrate=%u, bits=%d, MOSI=%s, MISO=%s, SCLK=%s, CS=%s )", 
+            self->unit, self->baudrate, self->bits, TOSTRING(SPI_1_MOSI), TOSTRING(SPI_1_MISO), TOSTRING(SPI_1_SCLK), TOSTRING(SPI_1_CS));
     }
 }
 
