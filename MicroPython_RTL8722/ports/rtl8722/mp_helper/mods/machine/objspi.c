@@ -44,7 +44,7 @@ STATIC spi_obj_t spi_obj[2] = {
 };
 
 #elif defined(RTL8722DM_MINI)
-STATIC spi_obj_t spi_obj[1] = {
+STATIC spi_obj_t spi_obj[2] = {
     {.base.type = &spi_type, .unit = 0, .bits = 8, .baudrate = SPI_DEFAULT_BAUD_RATE, .pol = SCPOL_INACTIVE_IS_LOW, .pha = SCPH_TOGGLES_IN_MIDDLE },
     {.base.type = &spi_type, .unit = 1, .bits = 8, .baudrate = SPI_DEFAULT_BAUD_RATE, .pol = SCPOL_INACTIVE_IS_LOW, .pha = SCPH_TOGGLES_IN_MIDDLE },
 };
@@ -84,8 +84,15 @@ STATIC mp_obj_t spi_make_new(const mp_obj_type_t *type, mp_uint_t n_args, mp_uin
     mp_arg_val_t args[MP_ARRAY_SIZE(spi_init_args)];
     mp_arg_parse_all(n_args, all_args, &kw_args, MP_ARRAY_SIZE(args), spi_init_args, args);
 
-    if (args[ARG_unit].u_int > 1)
+    if (args[ARG_unit].u_int > 1 || args[ARG_unit].u_int < 0) {
         mp_raise_ValueError("Invalid SPI unit");
+    }
+
+    #if defined(RTL8722DM_MINI)
+    if (args[ARG_unit].u_int == 0){
+        mp_raise_ValueError("MINI board doesn't support SPI 0!");
+    }
+    #endif
 
     spi_obj_t *self  = &spi_obj[args[ARG_unit].u_int];
     id = args[ARG_unit].u_int;
@@ -94,16 +101,17 @@ STATIC mp_obj_t spi_make_new(const mp_obj_type_t *type, mp_uint_t n_args, mp_uin
     self->bits     = args[ARG_bits].u_int;
     
     if (args[ARG_unit].u_int == 0) {
-        mp_spi_obj[id].spi_idx = MBED_SPI0;  // only MBED_SPI0 can be used as slave
+        mp_spi_obj[id].spi_idx = MBED_SPI0;  // MBED_SPI0 can be used as master/slave, but MINI board does NOT support SPI0
         spi_init(&mp_spi_obj[id], SPI_0_MOSI, SPI_0_MISO, SPI_0_SCLK, SPI_0_CS);
+
     } else {
-        mp_spi_obj[id].spi_idx = MBED_SPI1;
+        mp_spi_obj[id].spi_idx = MBED_SPI1;  // MBED_SPI1 only work as master
         spi_init(&mp_spi_obj[id], SPI_1_MOSI, SPI_1_MISO, SPI_1_SCLK, SPI_1_CS);
     }
     
     if (self->mode == SPI_MASTER) {
         spi_format(&mp_spi_obj[id], 8, 0, SPI_MASTER);       // 8 bits, mode 0[polarity=0,phase=0], and master-role
-        spi_frequency(&mp_spi_obj[id], self->baudrate);      // default 2M baud rate
+        spi_frequency(&mp_spi_obj[id], self->baudrate);      // default 0.2M baud rate
     } else {
         if (mp_spi_obj[id].spi_idx == MBED_SPI0) {
             spi_format(&mp_spi_obj[id], 8, 0, SPI_SLAVE);        // 8 bits, mode 0[polarity=0,phase=0], and slave-role
@@ -143,11 +151,11 @@ STATIC void spi_write(mp_obj_t *self_in, mp_obj_t value_in) {
     mp_int_t value = mp_obj_get_int(value_in);
 
     if (self->mode == SPI_MASTER) {
-        spi_master_write(&mp_spi_obj[id], value);
+        return mp_obj_new_int(spi_master_write(&mp_spi_obj[id], value));
     } else {
         spi_slave_write(&mp_spi_obj[id], value);
+        return mp_const_none;
     }
-    return mp_const_none;
 }
 STATIC MP_DEFINE_CONST_FUN_OBJ_2(spi_write_obj, spi_write);
 
@@ -157,6 +165,7 @@ STATIC const mp_map_elem_t spi_locals_dict_table[] = {
     //{ MP_ROM_QSTR(MP_QSTR_stop), MP_ROM_PTR(&spi_stop_obj) },
     { MP_ROM_QSTR(MP_QSTR_read), MP_ROM_PTR(&spi_read_obj) },
     { MP_ROM_QSTR(MP_QSTR_write), MP_ROM_PTR(&spi_write_obj) },
+
     // class constants
     { MP_OBJ_NEW_QSTR(MP_QSTR_MASTER),    MP_OBJ_NEW_SMALL_INT(SPI_MASTER) },
     { MP_OBJ_NEW_QSTR(MP_QSTR_SLAVE),     MP_OBJ_NEW_SMALL_INT(SPI_SLAVE) },
