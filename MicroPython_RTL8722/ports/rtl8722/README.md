@@ -356,10 +356,32 @@ Use the ```SPI``` (Serial Peripheral Interface) module through ```machine``` mod
 
 ```Python
 from machine import SPI
-spi = SPI(0)		  # Only support 2 sets of SPI -- 0 and 1 
-spi 				      # type instance name to check for details of the SPI set 
-spi.write(123)		# Write number 123 
+spi = SPI(0)      # Only support 2 sets of SPI -- 0 and 1, for MINI board, only SPI 1 is supported 
+spi               # type instance name to check for details of the SPI set 
+spi.write(123)    # Write number 123 
 spi.read()
+```
+
+
+#### Arduino UNO/Micro SPI Slave Test Code
+
+```C
+#include <SPI.h>
+
+void setup (void) {
+   Serial.begin (115200);
+   pinMode(MISO, OUTPUT); // have to send on master in so it set as output
+   SPCR |= _BV(SPE); // turn on SPI in slave mode
+   SPI.attachInterrupt(); // turn on interrupt
+}
+ISR (SPI_STC_vect){ // SPI interrupt routine  
+   byte c = SPDR; // read byte from SPI Data Register, value range from 0 - 255
+   Serial.println(c);
+}
+
+void loop (void) {
+   // do nothing
+}
 ```
 
 #### For Your Information

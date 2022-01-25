@@ -32,11 +32,16 @@
 #include "objpin.h"
 #include "objpwm.h"
 
-STATIC pwm_obj_t pwm_obj[4] = {
+STATIC pwm_obj_t pwm_obj[9] = {
     {.base.type = &pwm_type, .unit = 0},
     {.base.type = &pwm_type, .unit = 1},
     {.base.type = &pwm_type, .unit = 2},
-    {.base.type = &pwm_type, .unit = 3}
+    {.base.type = &pwm_type, .unit = 3},
+    {.base.type = &pwm_type, .unit = 4},
+    {.base.type = &pwm_type, .unit = 5},
+    {.base.type = &pwm_type, .unit = 6},
+    {.base.type = &pwm_type, .unit = 7},
+    {.base.type = &pwm_type, .unit = 8}
 };
 
 STATIC void pwm_print(const mp_print_t *print, mp_obj_t self_in, mp_print_kind_t kind) {

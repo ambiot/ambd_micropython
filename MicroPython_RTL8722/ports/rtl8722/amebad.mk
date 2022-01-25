@@ -172,6 +172,7 @@ CFLAGS = -O2
 CFLAGS += -march=armv8-m.main+dsp
 CFLAGS += -mthumb 
 CFLAGS += -D$(CHIP)
+CFLAGS += -D$(BOARD)
 CFLAGS += -DMICROPYTHON_RTL8721D
 CFLAGS += -DCONFIG_PLATFORM_8721D
 # source code macro
