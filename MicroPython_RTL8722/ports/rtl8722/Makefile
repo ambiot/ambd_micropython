@@ -9,12 +9,20 @@ include $(TOP)/py/py.mk
 
 OS := $(shell uname)
 CHIP := AMEBAD
+BOARD := RTL8722DM
 DEBUG := 1
 VENDOR := amebad_vendor/sdk
 TOOL := amebad_tool/tools
 
-#$(info ## This build only supports Cygwin and Linux!)
-#$(info ## Now building for: $(CHIP))
+
+
+$(info ## This build now supports Cygwin, Linux and MacOS)
+$(info ## Please specify which board you are building for, currently supported boards:)
+$(info    )
+$(info    * RTL8722DM)
+$(info    * RTL8722DM_MINI)
+$(info    )
+$(info ## Now building for: $(BOARD))
 
 
 # Declaring tools depending on OS
@@ -37,7 +45,7 @@ IMAGETOOL = amebad_image_tool.exe
 PICK = pick.exe
 PAD  = pad.exe
 BUILDTOOL_PATH := tools/windows
-UPLOAD_PATH := COM6
+UPLOAD_PATH := COM8
 POSTBUILDTOOL_PATH := amebad_tool/tools/windows
 MPY_CROSS = $(TOP)/mpy-cross/mpy-cross.exe
 LINKER_SCRIPT = amebad_vendor/linker_script

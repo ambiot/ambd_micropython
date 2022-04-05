@@ -356,10 +356,32 @@ Use the ```SPI``` (Serial Peripheral Interface) module through ```machine``` mod
 
 ```Python
 from machine import SPI
-spi = SPI(0)		  # Only support 2 sets of SPI -- 0 and 1 
-spi 				      # type instance name to check for details of the SPI set 
-spi.write(123)		# Write number 123 
+spi = SPI(0)      # Only support 2 sets of SPI -- 0 and 1, for MINI board, only SPI 1 is supported 
+spi               # type instance name to check for details of the SPI set 
+spi.write(123)    # Write number 123 
 spi.read()
+```
+
+
+#### Arduino UNO/Micro SPI Slave Test Code
+
+```C
+#include <SPI.h>
+
+void setup (void) {
+   Serial.begin (115200);
+   pinMode(MISO, OUTPUT); // have to send on master in so it set as output
+   SPCR |= _BV(SPE); // turn on SPI in slave mode
+   SPI.attachInterrupt(); // turn on interrupt
+}
+ISR (SPI_STC_vect){ // SPI interrupt routine  
+   byte c = SPDR; // read byte from SPI Data Register, value range from 0 - 255
+   Serial.println(c);
+}
+
+void loop (void) {
+   // do nothing
+}
 ```
 
 #### For Your Information
@@ -391,6 +413,18 @@ Note: both unit support master mode, but ```only unit 0``` support slave mode
 
 Use help(SPI) to view more information about this class
 
+
+### FLASH
+Use the ```FLASH``` (External FLASH 2MB) module through ```machine``` module
+
+```Python
+from machine import FLASH
+f=FLASH() #create a FLASH object
+f.read(5, 1048576) #read 5 bytes from the specific address (1048576 = 0X100000)
+f.write("Hello", 1048576) #write buffer content to the specific address
+f.update("Hey", 1048576) #erase the existing content and write new content to the specific address
+f.read(5, 1048576)
+```
 
 ## 5. Netoworking
 RTL8722 MicroPython port support WiFi connection through ```WLAN``` module.
@@ -563,20 +597,19 @@ http_get('http://micropython.org/ks/test.html')
 ```
 
 ## 6.SD Card File System
-SD File System is supported on MicroPython RTL8722 port through importing the ```sdfs``` module. This module is a simplified file system with the aim to highlight SD card manipulation, thus it doesn't support virtual file system as well as virtual file object.
+SD File System is supported on MicroPython RTL8722 port through importing the ```SDFS``` module from ```machine``` module. This module is a simplified file system with the aim to highlight SD card manipulation, thus it doesn't support virtual file system as well as virtual file object.
 
-Note: No hardware connection is needed for RTL8722DM_mini dev. board as it comes with SD Card slot on the back of the development board, and hardware connection has been pre-configured.
+Note: No hardware connection is needed for RTL8722DM_mini dev. board as it comes with SD Card slot on the back of the development board, and hardware connection has been pre-configured. However, for RTL8722DM dev. board (the big one), special configuration and fresh build of firmware are needed, please consult developer for more information.
 
-Simply import ```sdfs``` to use all available APIs
 
 ### SD Card File System Examples
 Use API provided to freely navigate through the SD card and read/write files as you see fit
 
 #### Listing and navigating through the file system
 ```Python
-import sdfs
+from machine import SDFS
 
-s=sdfs            # create a short form
+s=SDFS()          # create an instance and mount on file system on SD card
 s.listdir()       # listing the files and folders under current path
 s.mkdir("test")   # create a folder named "test" under current path
 s.chdir("test")   # change directory to test folder
@@ -587,9 +620,9 @@ s.rm("test")      # delete the test folder
 
 #### File Manipulation
 ```Python
-import sdfs
+from machine import SDFS
 
-s=sdfs                  # create a short form
+s=SDFS()                # create an instance and mount on file system on SD card
 s.create("ameba.txt")   # create a file named "ameba.txt"
 s.write("ameba.txt", "ameba supports sd card file system!") # write a string to the file just created
 s.read("ameba.txt")     # read the content from the same file

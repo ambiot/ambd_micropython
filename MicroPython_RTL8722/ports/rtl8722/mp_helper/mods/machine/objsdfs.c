@@ -1,4 +1,4 @@
-#include "modsdfs.h"
+#include "objsdfs.h"
 
 #define TEST_SIZE   (512)
 
@@ -20,6 +20,10 @@ logical_drv[3] = '\0';
 #endif
 
 static int drv_num = -1;
+
+bool mounted_flash = false;
+
+STATIC sdfs_obj_t sdfs_obj[1] = {{.base.type = &sdfs_type, .unit = 0 }};
 
 
 ///////////////////////////////
@@ -76,13 +80,6 @@ bool init_sd_fs(void){
 }
 
 
-///////////////////////////////
-//                           //
-//    External Functions     //
-//                           //
-///////////////////////////////
-
-
 char* getRootPath() {
     if (drv_num < 0) {
         return NULL;
@@ -91,20 +88,7 @@ char* getRootPath() {
     }
 }
 
-#if 0
-char* getCWD() {
 
-	char absolute_path[128];
-
-    if (drv_num < 0) {
-        return NULL;
-    } 
-    
-    f_getcwd(absolute_path, 128);
-
-    return absolute_path;
-}
-#endif
 
 void open(char* fileName) {
     FRESULT ret = FR_OK;
@@ -143,8 +127,59 @@ void open(char* fileName) {
 }
 
 
+#if 0
+char* getCWD() {
 
-STATIC mp_obj_t listdir(void) {
+    char absolute_path[128];
+
+    if (drv_num < 0) {
+        return NULL;
+    } 
+    
+    f_getcwd(absolute_path, 128);
+
+    return absolute_path;
+}
+#endif
+
+
+///////////////////////////////
+//                           //
+//    External Functions     //
+//                           //
+///////////////////////////////
+
+
+STATIC mp_obj_t sdfs_make_new(const mp_obj_type_t *type, mp_uint_t n_args, mp_uint_t n_kw, const mp_obj_t *all_args) {
+    const mp_arg_t sdfs_init_args[] = {
+        { MP_QSTR_unit, MP_ARG_INT, {.u_int = 0} },   // unit 0 is SD card file system 
+    };
+
+    mp_map_t kw_args;
+    mp_map_init_fixed_table(&kw_args, n_kw, all_args + n_args);
+    mp_arg_val_t args[MP_ARRAY_SIZE(sdfs_init_args)];
+    mp_arg_parse_all(n_args, all_args, &kw_args, MP_ARRAY_SIZE(args), sdfs_init_args, args);
+
+    int unit = args[0].u_int;
+
+    sdfs_obj_t *self = &sdfs_obj[unit];
+
+    // Initialise the local flash filesystem.
+    mounted_flash = init_sd_fs();  // mount on sd card
+
+    if (!mounted_flash) {
+        printf("[MP]: SD file system mount success\n");
+    } else {
+        printf("[MP]: Failed to mount SD file system\n");
+    }
+
+    return self;
+}
+
+
+
+STATIC mp_obj_t listdir(mp_obj_t self_in) {
+    sdfs_obj_t *self = self_in;
     FRESULT ret = FR_OK;
     FILINFO fno;
     DIR dir;
@@ -220,11 +255,12 @@ STATIC mp_obj_t listdir(void) {
     //return mp_obj_new_str(result_buf, bufidx);
     return mp_const_none;
 }
-MP_DEFINE_CONST_FUN_OBJ_0(listdir_obj, listdir);
+MP_DEFINE_CONST_FUN_OBJ_1(listdir_obj, listdir);
 
 
 
-STATIC mp_obj_t mkdir(mp_obj_t dirName) {
+STATIC mp_obj_t mkdir(mp_obj_t self_in, mp_obj_t dirName) {
+    sdfs_obj_t *self = self_in;
     FRESULT ret = FR_OK;
     char absolute_path[128];
     
@@ -245,12 +281,13 @@ STATIC mp_obj_t mkdir(mp_obj_t dirName) {
 
     return mp_const_none;
 }
-MP_DEFINE_CONST_FUN_OBJ_1(mkdir_obj, mkdir);
+MP_DEFINE_CONST_FUN_OBJ_2(mkdir_obj, mkdir);
 
 
 
 // Note: Set _FS_RPATH to 2 in ffconf.h in order to enable chdir and getcwd
-STATIC mp_obj_t chdir(mp_obj_t dirName) {
+STATIC mp_obj_t chdir(mp_obj_t self_in, mp_obj_t dirName) {
+    sdfs_obj_t *self = self_in;
     FRESULT ret = FR_OK;
     char absolute_path[128];
     char root[] = "/";
@@ -291,12 +328,12 @@ STATIC mp_obj_t chdir(mp_obj_t dirName) {
 
     return mp_const_none;
 }
-MP_DEFINE_CONST_FUN_OBJ_1(chdir_obj, chdir);
+MP_DEFINE_CONST_FUN_OBJ_2(chdir_obj, chdir);
 
 
 
-
-STATIC mp_obj_t rm(mp_obj_t fileName) {
+STATIC mp_obj_t rm(mp_obj_t self_in, mp_obj_t fileName) {
+    sdfs_obj_t *self = self_in;
     FRESULT ret = FR_OK;
     char absolute_path[128];
     
@@ -318,19 +355,22 @@ STATIC mp_obj_t rm(mp_obj_t fileName) {
 
     return mp_const_none;
 }
-MP_DEFINE_CONST_FUN_OBJ_1(rm_obj, rm);
+MP_DEFINE_CONST_FUN_OBJ_2(rm_obj, rm);
 
 
-STATIC mp_obj_t pwd() {
+
+STATIC mp_obj_t pwd(mp_obj_t self_in) {
+    sdfs_obj_t *self = self_in;
     printf("%s\n", mp_cwd);
 
     return mp_const_none;
 }
-MP_DEFINE_CONST_FUN_OBJ_0(pwd_obj, pwd);
+MP_DEFINE_CONST_FUN_OBJ_1(pwd_obj, pwd);
 
 
 
-STATIC mp_obj_t create(mp_obj_t fileName) {
+STATIC mp_obj_t create(mp_obj_t self_in, mp_obj_t fileName) {
+    sdfs_obj_t *self = self_in;
     FRESULT ret = FR_OK;
     char absolute_path[128];
 
@@ -369,12 +409,12 @@ STATIC mp_obj_t create(mp_obj_t fileName) {
 
     return mp_const_none;
 }
-MP_DEFINE_CONST_FUN_OBJ_1(create_obj, create);
+MP_DEFINE_CONST_FUN_OBJ_2(create_obj, create);
 
 
 
-
-STATIC mp_obj_t read(mp_obj_t fileName) {
+STATIC mp_obj_t read(mp_obj_t self_in, mp_obj_t fileName) {
+    sdfs_obj_t *self = self_in;
     FRESULT ret = FR_OK;
     char buf[512];
     unsigned int readsize = 0;
@@ -399,12 +439,12 @@ STATIC mp_obj_t read(mp_obj_t fileName) {
     //return mp_obj_new_int(readsize);
     return mp_const_none;
 }
-MP_DEFINE_CONST_FUN_OBJ_1(read_obj, read);
+MP_DEFINE_CONST_FUN_OBJ_2(read_obj, read);
 
 
 
-
-STATIC mp_obj_t write(mp_obj_t fileName, mp_obj_t buf_in) {
+STATIC mp_obj_t write(mp_obj_t self_in, mp_obj_t fileName, mp_obj_t buf_in) {
+    sdfs_obj_t *self = self_in;
     FRESULT ret = FR_OK;
     unsigned int writesize = 0;
     char buf[512];
@@ -443,7 +483,7 @@ STATIC mp_obj_t write(mp_obj_t fileName, mp_obj_t buf_in) {
     //return writesize;
     return mp_const_none;
 }
-MP_DEFINE_CONST_FUN_OBJ_2(write_obj, write);
+MP_DEFINE_CONST_FUN_OBJ_3(write_obj, write);
 
 
 
@@ -454,8 +494,7 @@ MP_DEFINE_CONST_FUN_OBJ_2(write_obj, write);
 /////////////////////////////////////////////////
 
 
-STATIC const mp_map_elem_t sdfs_module_globals_table[] = {
-    { MP_OBJ_NEW_QSTR(MP_QSTR___name__),      MP_OBJ_NEW_QSTR(MP_QSTR_sdfs) },
+STATIC const mp_map_elem_t sdfs_locals_dict_table[] = {
     { MP_OBJ_NEW_QSTR(MP_QSTR_listdir),       MP_OBJ_FROM_PTR(&listdir_obj) },
     { MP_OBJ_NEW_QSTR(MP_QSTR_mkdir),         MP_OBJ_FROM_PTR(&mkdir_obj)   },
     { MP_OBJ_NEW_QSTR(MP_QSTR_chdir),         MP_OBJ_FROM_PTR(&chdir_obj)   },
@@ -465,9 +504,12 @@ STATIC const mp_map_elem_t sdfs_module_globals_table[] = {
     { MP_OBJ_NEW_QSTR(MP_QSTR_read),          MP_OBJ_FROM_PTR(&read_obj)    },
     { MP_OBJ_NEW_QSTR(MP_QSTR_write),         MP_OBJ_FROM_PTR(&write_obj)   },
 };
-STATIC MP_DEFINE_CONST_DICT(sdfs_module_globals, sdfs_module_globals_table);
+STATIC MP_DEFINE_CONST_DICT(sdfs_locals_dict, sdfs_locals_dict_table);
 
-const mp_obj_module_t mp_module_sdfs = {
-    .base    = { &mp_type_module },
-    .globals = (mp_obj_dict_t*)&sdfs_module_globals,
+
+const mp_obj_type_t sdfs_type = {
+    { &mp_type_type },
+    .name        = MP_QSTR_SDFS,
+    .make_new    = sdfs_make_new,
+    .locals_dict = (mp_obj_t)&sdfs_locals_dict,
 };

@@ -46,7 +46,6 @@
 #include "serial_api.h"
 #include "main.h"
 #include "lib/utils/interrupt_char.h"
-#include "modsdfs.h"
 
 
 
@@ -54,7 +53,7 @@
 
 //void serial_repl_handler(uint32_t id, SerialIrq event);
 /*****************************************************************************
- *                              Internal variables
+ *                              Internal functions
  * ***************************************************************************/
 /*
  * //app_mbedtls_rom_init 
@@ -81,10 +80,6 @@ void app_mbedtls_rom_init(void)
     rtl_cryptoEngine_init();
 }
 
-/*****************************************************************************
- *                              External variables
- * ***************************************************************************/
-
 
 osThreadId main_tid = 0;
 
@@ -106,18 +101,6 @@ soft_reset:
 
     modmachine_init();
     modwireless_init();
-
-    // Initialise the local flash filesystem.
-    bool mounted_flash = false;
-
-    // Init File System on SD card is available 
-    mounted_flash = init_sd_fs();
-
-    if (!mounted_flash) {
-        printf("[DRIVER]: file system mounted\n");
-    } else {
-        printf("[DRIVER]: Error occured while mounting file system\n");
-    }
 
     //readline_init0();
     pyexec_frozen_module("boot.py");

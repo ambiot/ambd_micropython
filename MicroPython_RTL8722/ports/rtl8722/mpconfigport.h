@@ -142,7 +142,6 @@ extern const struct _mp_obj_module_t mp_module_uos;
 extern const struct _mp_obj_module_t mp_module_utime;
 extern const struct _mp_obj_module_t mp_module_uwireless;
 extern const struct _mp_obj_module_t mp_module_usocket;
-extern const struct _mp_obj_module_t mp_module_sdfs;
 #if 0
 extern const struct _mp_obj_module_t mp_module_uterminal;
 extern const struct _mp_obj_module_t mp_module_ussl;
@@ -157,7 +156,6 @@ extern const struct _mp_obj_module_t mp_network_module;
     { MP_OBJ_NEW_QSTR(MP_QSTR_utime),        MP_OBJ_FROM_PTR(&mp_module_utime) },      \
     { MP_OBJ_NEW_QSTR(MP_QSTR_uwireless),    MP_OBJ_FROM_PTR(&mp_module_uwireless) },  \
     { MP_OBJ_NEW_QSTR(MP_QSTR_usocket),      MP_OBJ_FROM_PTR(&mp_module_usocket) },    \
-    { MP_OBJ_NEW_QSTR(MP_QSTR_sdfs),         MP_OBJ_FROM_PTR(&mp_module_sdfs) },         \
 /*    { MP_OBJ_NEW_QSTR(MP_QSTR_ussl),         MP_OBJ_FROM_PTR(&mp_module_ussl) },    \
     { MP_OBJ_NEW_QSTR(MP_QSTR_network),      MP_OBJ_FROM_PTR(&mp_network_module) },    \
     { MP_OBJ_NEW_QSTR(MP_QSTR_uterminal),    MP_OBJ_FROM_PTR(&mp_module_uterminal) },   \
@@ -177,15 +175,22 @@ extern const struct _mp_obj_module_t mp_network_module;
 
 #define MICROPY_PY_SYS_PLATFORM             "Realtek Ameba"
 
-#define MICROPY_HW_PORT_VERSION             "1.0.2"
+#define MICROPY_HW_PORT_VERSION             "1.0.3"
 
 #define MICROPY_HW_BOARD_NAME               MICROPY_PY_SYS_PLATFORM
-#define MICROPY_HW_MCU_NAME                 "RTL8722"
+
+#if defined(RTL8722DM)
+#define MICROPY_HW_MCU_NAME                 "RTL8722DM"
+#elif defined(RTL8722DM_MINI)
+#define MICROPY_HW_MCU_NAME                 "RTL8722DM_MINI"
+#else
+#error "Please specify the correct board name before re-try"
+#endif 
 
 #define MICROPY_WLAN_AP_DEFAULT_SSID        "YourSSID"
 #define MICROPY_WLAN_AP_DEFAULT_PASS        "YourPSWD"
 
-#define MP_HEAP_SIZE                        (180 * 1024)
+#define MP_HEAP_SIZE                        (16 * 1024)
 //#define MP_HEAP_SIZE                        (1124 * 1024)
 
 #define MICROPY_TASK_NAME                   "MicroPython"
