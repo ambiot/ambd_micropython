@@ -175,7 +175,7 @@ extern const struct _mp_obj_module_t mp_network_module;
 
 #define MICROPY_PY_SYS_PLATFORM             "Realtek Ameba"
 
-#define MICROPY_HW_PORT_VERSION             "1.0.3"
+#define MICROPY_HW_PORT_VERSION             "1.1.1"
 
 #define MICROPY_HW_BOARD_NAME               MICROPY_PY_SYS_PLATFORM
 
@@ -190,7 +190,7 @@ extern const struct _mp_obj_module_t mp_network_module;
 #define MICROPY_WLAN_AP_DEFAULT_SSID        "YourSSID"
 #define MICROPY_WLAN_AP_DEFAULT_PASS        "YourPSWD"
 
-#define MP_HEAP_SIZE                        (16 * 1024)
+#define MP_HEAP_SIZE                        (188 * 1024)
 //#define MP_HEAP_SIZE                        (1124 * 1024)
 
 #define MICROPY_TASK_NAME                   "MicroPython"
