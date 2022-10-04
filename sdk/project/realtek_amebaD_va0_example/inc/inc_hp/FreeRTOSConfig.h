@@ -82,7 +82,7 @@ extern uint32_t SystemCoreClock;
 #define configMINIMAL_SECURE_STACK_SIZE					( 1024 )
 #define configMAX_TASK_NAME_LEN							( 10 )
 #ifdef CONFIG_WIFI_EN
-#define configTOTAL_HEAP_SIZE						( ( size_t ) ( 100 * 1024 ) ) //default
+#define configTOTAL_HEAP_SIZE						( ( size_t ) ( 140 * 1024 ) ) //default
 #if (defined CONFIG_HIGH_TP_TEST)
 	#define configTOTAL_HEAP_SIZE					( ( size_t ) ( 100 * 1024 ) )		
 #endif
