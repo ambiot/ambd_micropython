@@ -1,8 +1,23 @@
 ####################################################
 #                                                  #
-#  MicroPython SDK RTL8722DM Release History       #
+#  MicroPython SDK  Release History                #
 #                                                  #
 ####################################################
+
+# MicroPython SDK releasse V1.1.2 16/11/2022
+- Update SDK and libs to the latet
+- Add support for BW16 board
+- Add VFS on flash 
+- Add VFS on SDCard
+- Update Windows firmware upload script
+- Update Linux firmware upload script
+- Update MacOS firmware upload script
+
+
+# MicroPython SDK releasse V1.1.1 17/05/2022
+- Update ameba SDK and libs downsize FreeRTOS heap from 250KB to 100KB
+- Increase MicroPython Heap size to 188KB
+- Update release firmware
 
 
 # MicroPython SDK release V1.1.0  06/04/2022
@@ -12,7 +27,6 @@
 - Update peripheral API wrapper and fix minor bugs
 - Update README.md
 - Update Windows firmware upload script
-
 
 
 # MicroPython SDK release V1.0.2  14/10/2021

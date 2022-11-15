@@ -73,7 +73,7 @@
 /******************************************************
  *                    Constants
  ******************************************************/
-#define SCAN_LONGEST_WAIT_TIME  (4500)
+#define SCAN_LONGEST_WAIT_TIME  (12000)
 
 
 #define MAC_FMT "%02x:%02x:%02x:%02x:%02x:%02x"
@@ -250,6 +250,15 @@ int wifi_is_up(rtw_interface_t interface);
  *  		  transceive ethernet packets
  */
 int wifi_is_ready_to_transceive(rtw_interface_t interface);
+
+/**
+ * @brief  This function sets the current Media Access Control (MAC) address of the 802.11 device but don't 
+write to  efuse or flash, it is temporary to modify the MAC.
+ * @param[in] idx: 0=> wlan0, 1=>wlan1.
+ * @param[in] mac: Wi-Fi MAC address.
+ * @return    RTW_SUCCESS or RTW_ERROR
+ */
+int wifi_change_mac_address_from_ram(int idx, u8 *mac);
 
 /**
  * @brief  This function sets the current Media Access Control (MAC) address of the 802.11 device.
@@ -492,6 +501,14 @@ int wifi_set_mode(rtw_mode_t mode);
  *  	   RTW_ERROR otherwise
  */
 int wifi_off_fastly(void);
+
+/**
+ * @brief  Specify wpa mode for wifi connection.
+ * @param[in] wpa_mode: The desired wpa mode. It is defined as enum rtw_wpa_mode.
+ * @return  RTW_SUCCESS if setting wpa mode successful.
+ * @return  RTW_ERROR otherwise.
+ */
+int wifi_set_wpa_mode(rtw_wpa_mode wpa_mode);
 
 /**
  * @brief  Set IPS/LPS mode.

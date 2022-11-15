@@ -521,8 +521,8 @@
 #define FATFS_R_10C
 // fatfs disk interface
 #define FATFS_DISK_USB	0
-#define FATFS_DISK_SD 	1
-#define FATFS_DISK_FLASH 	0
+#define FATFS_DISK_SD 	0
+#define FATFS_DISK_FLASH 	1
 #endif
 #endif
 
